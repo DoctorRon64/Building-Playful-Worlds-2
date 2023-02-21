@@ -3,14 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using JetBrains.Annotations;
+using System.Net.Sockets;
 
-
-public class DungeonGenerator : MonoBehaviour
+public partial class DungeonGenerator : MonoBehaviour
 {
     public enum TileType { Floor , Wall }
 
     public GameObject MuurObject;
     public GameObject GrondObject;
+    public GameObject Enemy;
+
+    public int EnemyAmount;
 
     public int GridBreedte = 100;
     public int GridHoogte = 100;
@@ -37,10 +41,10 @@ public class DungeonGenerator : MonoBehaviour
         AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
+        SpwanRandomObjectInRoom(Enemy);
         GenereerKerker();
         //spwan player
         //spawn items
-        //spawn enemies
     }
 
     [ContextMenu("Clear Dungeon")]
@@ -53,6 +57,7 @@ public class DungeonGenerator : MonoBehaviour
 
         Kerker.Clear();
         kamerList.Clear();
+        alleGeinstantieerdePrefabs.Clear();
     }
 
     private void ConnectRooms()
@@ -91,7 +96,6 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
-
     private void AllLocateWalls()
     {
         var keys = Kerker.Keys.ToList();
@@ -122,6 +126,18 @@ public class DungeonGenerator : MonoBehaviour
                 case TileType.Wall: obj = Instantiate(MuurObject, posTile, Quaternion.identity, transform); break;
             }
             alleGeinstantieerdePrefabs.Add(obj);
+        }
+    }
+
+    private void SpwanRandomObjectInRoom(GameObject _obj)
+    {
+        Vector3 posRandomInRoom;
+        for (int j = 0; j < kamerList.Count; j++)
+        {
+            posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
+            GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity);
+            instanceObj.transform.parent = gameObject.transform;
+            alleGeinstantieerdePrefabs.Add(instanceObj);
         }
     }
 
