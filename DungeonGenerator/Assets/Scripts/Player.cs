@@ -4,20 +4,10 @@ using static DungeonGenerator;
 
 public class Player : MonoBehaviour
 {
-    public DungeonGenerator Generator;
-    public Dictionary<Vector2Int, TileType> Kerker = new Dictionary<Vector2Int, TileType>();
+    public Dictionary<Vector2Int, TileType> Kerker;
 
-    private void Awake()
+    public void Generator(DungeonGenerator _DungeonGenerator)
     {
-        Generator = GetComponent<DungeonGenerator>();
-        Kerker = Generator.Kerker;
-    }
-
-    public void CanPlayerMove()
-    {
-        foreach (KeyValuePair<Vector2Int, TileType> keyvalue in Kerker)
-        {
-            
-        }
+        Kerker = _DungeonGenerator.Kerker;
     }
 }

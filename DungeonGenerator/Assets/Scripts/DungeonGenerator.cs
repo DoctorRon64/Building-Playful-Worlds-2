@@ -2,28 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using JetBrains.Annotations;
-using System.Net.Sockets;
 
-public partial class DungeonGenerator : MonoBehaviour
+public class DungeonGenerator : MonoBehaviour
 {
-    public enum TileType { Floor , Wall }
+    public enum TileType { Floor , Wall , StartFloor }
 
     public GameObject MuurObject;
     public GameObject GrondObject;
-    public GameObject Enemy;
+    public GameObject BeginGrondObject;
 
-    public int EnemyAmount;
+    public GameObject Player;
+    public List<Enemy> Enemies = new List<Enemy>();
+    public List<Item> Items = new List<Item>();
 
     public int GridBreedte = 100;
     public int GridHoogte = 100;
 
     public int minKamerGrote = 3;
     public int maxKamerGrote = 7;
+    public int MaxeObjectInRoom = 3;
 
+    private Vector3 posRandomInRoom;
     public int numKamers = 10;
+
     public Dictionary<Vector2Int, TileType> Kerker = new Dictionary<Vector2Int, TileType>();
     public List<Room> kamerList = new List<Room>();
+    public List<GameObject> ItemList = new List<GameObject>();
+    public List<GameObject> EnemyList = new List<GameObject>();
     public List<GameObject> alleGeinstantieerdePrefabs = new List<GameObject>();
 
     private void Awake()
@@ -37,13 +42,17 @@ public partial class DungeonGenerator : MonoBehaviour
         Debug.Log("Begin de kerker te genereren");
 
         ClearDungeon();
+        MakeStartRoom();
         AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
-        SpwanRandomObjectInRoom(Enemy);
+
+        SpwanRandomObjectInRoom(Enemies[0].gameObject, EnemyList);
+        SpwanRandomObjectInRoom(Enemies[1].gameObject, EnemyList);
+        SpwanRandomObjectInRoom(Items[0].gameObject, ItemList);
+        SpwanRandomObjectInRoom(Items[1].gameObject, ItemList);
+
         GenereerKerker();
-        //spwan player
-        //spawn items
     }
 
     [ContextMenu("Clear Dungeon")]
@@ -56,6 +65,7 @@ public partial class DungeonGenerator : MonoBehaviour
 
         Kerker.Clear();
         kamerList.Clear();
+        EnemyList.Clear();
         alleGeinstantieerdePrefabs.Clear();
     }
 
@@ -67,6 +77,30 @@ public partial class DungeonGenerator : MonoBehaviour
             Room room = kamerList[i];
             Room otherRoom = kamerList[(i + Random.Range(1, kamerList.Count)) % kamerList.Count];
             ConnectKamers(room, otherRoom);
+        }
+    }
+
+    private void MakeStartRoom()
+    {
+        //randomize de grotes van de kamers op basis van de gridsize
+        int minX = Random.Range(0, GridBreedte);
+        int maxX = minX + Random.Range(minKamerGrote, maxKamerGrote + 1);
+        int minY = Random.Range(0, GridHoogte);
+        int maxY = minY + Random.Range(minKamerGrote, maxKamerGrote + 1);
+
+        //genereer kamer met deze exacte grotes
+        Room kamer = new Room(minX, maxX, minY, maxY);
+
+        //kan de kamer in de dungeon passen zo niet genereer een nieuwe grote kamer
+        PlaatsStartKamerInKerker(kamer);
+
+        for (int j = 0; j < kamerList.Count; j++)
+        {
+            posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
+            GameObject instanceObj = Instantiate(Player, posRandomInRoom, Quaternion.identity);
+            instanceObj.transform.parent = gameObject.transform;
+            instanceObj.GetComponent<Player>().Generator(this);
+            alleGeinstantieerdePrefabs.Add(instanceObj);
         }
     }
 
@@ -121,6 +155,7 @@ public partial class DungeonGenerator : MonoBehaviour
             GameObject obj = null;
             switch (keyvalue.Value)
             {
+                case TileType.StartFloor: obj = Instantiate(BeginGrondObject, posTile, Quaternion.identity, transform); break;
                 case TileType.Floor: obj = Instantiate(GrondObject, posTile, Quaternion.identity, transform); break;
                 case TileType.Wall: obj = Instantiate(MuurObject, posTile, Quaternion.identity, transform); break;
             }
@@ -128,15 +163,36 @@ public partial class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void SpwanRandomObjectInRoom(GameObject _obj)
+    private void SpwanRandomObjectInRoom(GameObject _obj, List<GameObject> _list)
     {
-        Vector3 posRandomInRoom;
+        //kijk door alle kamers heen
         for (int j = 0; j < kamerList.Count; j++)
         {
-            posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
-            GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity);
-            instanceObj.transform.parent = gameObject.transform;
-            alleGeinstantieerdePrefabs.Add(instanceObj);
+            //Random objects per kamer
+            int ObjectAmount = Random.Range(0, MaxeObjectInRoom);
+
+            bool samePos = false;
+            //kijk of object op zelfde positie zit als een ander object
+            for (int i = 0; i < ObjectAmount; i++)
+            {
+                //random positie in kamer
+                posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
+                foreach (GameObject _lookobjectinlist in _list)
+                {
+                    if (posRandomInRoom == _lookobjectinlist.transform.position)
+                    {
+                        samePos = true;
+                        break;
+                    }
+                }
+                if (!samePos)
+                {
+                    GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity);
+                    instanceObj.transform.parent = gameObject.transform;
+                    _list.Add(instanceObj);
+                    alleGeinstantieerdePrefabs.Add(instanceObj);
+                }
+            }
         }
     }
 
@@ -161,6 +217,18 @@ public partial class DungeonGenerator : MonoBehaviour
             if (Kerker.ContainsKey(position)) { continue; }
             Kerker.Add(position, TileType.Floor);
         }
+    }
+
+    public void PlaatsStartKamerInKerker(Room _kamer)
+    {
+        for (int x = _kamer.minX; x <= _kamer.maxX; x++)
+        {
+            for (int y = _kamer.minY; y <= _kamer.maxY; y++)
+            {
+                Kerker.Add(new Vector2Int(x, y), TileType.StartFloor);
+            }
+        }
+        kamerList.Add(_kamer);
     }
 
     public void PlaatsKamerInKerker(Room _kamer)
