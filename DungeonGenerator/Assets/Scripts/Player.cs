@@ -10,4 +10,14 @@ public class Player : MonoBehaviour
     {
         Kerker = _DungeonGenerator.Kerker;
     }
+
+	public void Update()
+	{
+		CheckAroundPlayer();
+	}
+
+    void CheckAroundPlayer()
+	{
+		
+	}
 }
