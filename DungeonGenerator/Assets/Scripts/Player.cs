@@ -4,20 +4,59 @@ using static DungeonGenerator;
 
 public class Player : MonoBehaviour
 {
-    public Dictionary<Vector2Int, TileType> Kerker;
+	public Dictionary<Vector2Int, TileType> Kerker;
 
-    public void Generator(DungeonGenerator _DungeonGenerator)
-    {
-        Kerker = _DungeonGenerator.Kerker;
-    }
+	public Transform MovePoint;
+	public Animator AnimatorController;
+	public float MoveSpeed =5f;
+	public LayerMask WallLayer;
 
-	public void Update()
+	public void Generator(DungeonGenerator _DungeonGenerator)
 	{
-		CheckAroundPlayer();
+		Kerker = _DungeonGenerator.Kerker;
 	}
 
-    void CheckAroundPlayer()
+	private void Awake()
 	{
-		
+		MovePoint.parent = null;
+		AnimatorController = GetComponent<Animator>();
+	}
+
+	private void Update()
+	{
+		PlayerMovement();
+	}
+
+	private void PlayerMovement()
+	{
+		//ga naar movepoint
+		transform.position = Vector3.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
+
+		//als ik niet op movepoint zit
+		if (Vector3.Distance(transform.position, MovePoint.position) <= .05f)
+		{
+			//als ik naar links of rechts beweeg
+			if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
+			{
+				//kijk of er geen muren om mij heen zit
+				if (!Physics2D.OverlapCircle(MovePoint.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), .2f, WallLayer))
+				{
+					//zet movepoint positie
+					MovePoint.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
+				}
+			} 
+
+			else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
+			{
+				if (!Physics2D.OverlapCircle(MovePoint.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), .2f, WallLayer))
+				{
+					MovePoint.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
+				}
+			}
+			AnimatorController.SetBool("Moving", false);
+		} else
+		{
+			AnimatorController.SetBool("Moving", true);
+		}
 	}
 }
