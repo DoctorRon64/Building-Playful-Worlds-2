@@ -4,22 +4,17 @@ using static DungeonGenerator;
 
 public class Player : MonoBehaviour
 {
-	public Dictionary<Vector2Int, TileType> Kerker;
-
 	public Transform MovePoint;
 	public Animator AnimatorController;
-	public float MoveSpeed =5f;
+	public float MoveSpeed = 5f;
 	public LayerMask WallLayer;
 	private TurnManager TurnManager;
-
-	public void Generator(DungeonGenerator _DungeonGenerator)
-	{
-		Kerker = _DungeonGenerator.Kerker;
-	}
+    private DungeonGenerator DungeonGenerator;
 
 	private void Awake()
 	{
-		MovePoint.parent = null;
+        DungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        MovePoint.parent = null;
 		AnimatorController = GetComponent<Animator>();
         TurnManager = FindObjectOfType<TurnManager>();
 	}
@@ -42,7 +37,6 @@ public class Player : MonoBehaviour
                 //als ik naar links of rechts beweeg
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
                 {
-                    //kijk of er geen muren om mij heen zit
                     if (!Physics2D.OverlapCircle(MovePoint.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), .2f, WallLayer))
                     {
                         //zet movepoint positie

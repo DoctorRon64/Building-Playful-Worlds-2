@@ -49,9 +49,11 @@ public class DungeonGenerator : MonoBehaviour
         AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
-    
-        for (int i = 0; i < EnemyList.Count; i++) { SpwanRandomObjectInRoom(Enemies[i].gameObject, EnemyList); }
-        for (int i = 0; i < ItemList.Count; i++) { SpwanRandomObjectInRoom(Items[i].gameObject, EnemyList); }
+
+        SpwanRandomObjectInRoom(Enemies[0].gameObject, EnemyList);
+        SpwanRandomObjectInRoom(Enemies[1].gameObject, EnemyList);
+        SpwanRandomObjectInRoom(Items[0].gameObject, ItemList);
+        SpwanRandomObjectInRoom(Items[1].gameObject, ItemList);
 
         GenereerKerker();
         
@@ -103,9 +105,9 @@ public class DungeonGenerator : MonoBehaviour
             posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
             GameObject instanceObj = Instantiate(Player, posRandomInRoom, Quaternion.identity);
             instanceObj.transform.parent = gameObject.transform;
-            instanceObj.GetComponent<Player>().Generator(this);
             alleGeinstantieerdePrefabs.Add(instanceObj);
         }
+        
     }
 
     private void AllLocateRooms()
