@@ -7,25 +7,19 @@ using UnityEngine.Timeline;
 public class Enemy : MonoBehaviour
 {
     private DungeonGenerator DungeonGenerator;
-    private Transform PlayerObj;
     public Transform MovePoint;
-    private enum StateEnum { Patrol , Attack };
-    private StateEnum State;
+    public float MoveSpeed = 5f;
 
     public void Awake()
     {
         MovePoint = transform.GetChild(0);
-        PlayerObj = FindObjectOfType<Player>().transform;
+        MovePoint.parent = null;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
     }
 
     protected void Update()
     {
-        switch (State)
-        {
-            case StateEnum.Patrol: PatrolState(); break;
-            case StateEnum.Attack: AttackState(); break;
-        }
+
     }
 
     protected TileType GetTileTypeWithKey(Vector2Int _Vector2)
@@ -39,41 +33,43 @@ public class Enemy : MonoBehaviour
         if (GetTileTypeWithKey(new Vector2Int((int)transform.position.x + _xpos, (int)transform.position.y + _ypos)) == TileType.Floor)
         {
             return new Vector2Int((int)transform.position.x + _xpos, (int)transform.position.y + _ypos);
+        } 
+        else
+        {
+            return new Vector2Int(0, 0);
         }
-        return new Vector2Int(0, 0);
     }
 
-    protected void PatrolState()
+    [ContextMenu("Walk Enemies 10x")]
+    protected void RunPatrolAmountOfTimes()
     {
-        foreach (KeyValuePair<Vector2Int, TileType> keyvalue in DungeonGenerator.Kerker)
+        for (int i = 0; i < 10; i++)
         {
-            Vector2Int[] WhichSideToMove = new Vector2Int[4];
-            WhichSideToMove[0] = GetTileTypeAround(0, 1); //up
-            WhichSideToMove[1] = GetTileTypeAround(0, -1); //down
-            WhichSideToMove[2] = GetTileTypeAround(1, 0); //right
-            WhichSideToMove[3] = GetTileTypeAround(-1, 0); //left
-
-            int newDirection = Random.Range(0, WhichSideToMove.Length);
-            MovePoint.position = new Vector3(WhichSideToMove[newDirection].x, WhichSideToMove[newDirection].y, 0f);
-        }
-
-        if (Vector2.Distance(transform.position, PlayerObj.position) < 10)
-        {
-            State = StateEnum.Attack;
+            PatrolBehaviour();
         }
     }
 
-    protected void AttackState()
+
+    [ContextMenu("Walk Enemies")]
+    protected void PatrolBehaviour()
     {
-        foreach (KeyValuePair<Vector2Int, TileType> keyvalue in DungeonGenerator.Kerker)
+        Vector2Int[] WhichSideToMove = new Vector2Int[4];
+        WhichSideToMove[0] = GetTileTypeAround(0, 1); //up
+        WhichSideToMove[1] = GetTileTypeAround(0, -1); //down
+        WhichSideToMove[2] = GetTileTypeAround(1, 0); //right
+        WhichSideToMove[3] = GetTileTypeAround(-1, 0); //left
+
+        List<Vector2Int> moveToVec = new List<Vector2Int>();
+        for (int i = 0; i < WhichSideToMove.Length; i++)
         {
-            //loop NAAR SPELER
+            if (WhichSideToMove[i] != new Vector2Int((int)transform.position.x, (int)transform.position.y))
+            {
+                moveToVec.Add(WhichSideToMove[i]);
+            }
         }
 
-        if (Vector2.Distance(transform.position, PlayerObj.position) > 10)
-        {
-            State = StateEnum.Patrol;
-        }
+        int newDirection = Random.Range(0, moveToVec.Count);
+        MovePoint.position = new Vector3(WhichSideToMove[newDirection].x, WhichSideToMove[newDirection].y, 0f);
+        transform.position = Vector2.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
     }
-
 }
