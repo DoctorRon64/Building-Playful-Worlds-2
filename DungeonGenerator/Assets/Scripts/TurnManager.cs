@@ -1,19 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class TurnManager : MonoBehaviour
 {
-    public enum WhoTurn { Player = 0, Zombie = 1, Goblin = 2 }
+    public bool IsPlayerTurn;
+    public bool IsOpponentTurn;
+    public Button EndTurnButton;
 
-    void Start()
+    public void Start()
     {
-        
+        EndTurnButton.interactable = true;
+        IsPlayerTurn = true;
+        IsOpponentTurn = false;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void EndPlayerTurn()
     {
-        
+        if (IsPlayerTurn)
+        {
+            EndTurnButton.interactable = false;
+            IsPlayerTurn = false;
+            IsOpponentTurn = true;
+        }
+    }
+
+    public void EndEnemyTurn()
+    {
+        if (IsOpponentTurn)
+        {
+            EndTurnButton.interactable = true;
+            IsOpponentTurn = false;
+            IsPlayerTurn = true;
+        }
     }
 }
