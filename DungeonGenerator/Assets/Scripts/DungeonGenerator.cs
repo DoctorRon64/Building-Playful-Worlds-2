@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using Cinemachine;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -31,6 +32,8 @@ public class DungeonGenerator : MonoBehaviour
     public List<GameObject> EnemyList = new List<GameObject>();
     public List<GameObject> alleGeinstantieerdePrefabs = new List<GameObject>();
 
+    public SetCamera SetCameraFollow;
+
     private void Awake()
     {
         Generate();
@@ -46,13 +49,13 @@ public class DungeonGenerator : MonoBehaviour
         AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
-
-        SpwanRandomObjectInRoom(Enemies[0].gameObject, EnemyList);
-        SpwanRandomObjectInRoom(Enemies[1].gameObject, EnemyList);
-        SpwanRandomObjectInRoom(Items[0].gameObject, ItemList);
-        SpwanRandomObjectInRoom(Items[1].gameObject, ItemList);
+    
+        for (int i = 0; i < EnemyList.Count; i++) { SpwanRandomObjectInRoom(Enemies[i].gameObject, EnemyList); }
+        for (int i = 0; i < ItemList.Count; i++) { SpwanRandomObjectInRoom(Items[i].gameObject, EnemyList); }
 
         GenereerKerker();
+        
+        SetCameraFollow.GetPlayerCam();
     }
 
     [ContextMenu("Clear Dungeon")]
@@ -66,6 +69,7 @@ public class DungeonGenerator : MonoBehaviour
         Kerker.Clear();
         kamerList.Clear();
         EnemyList.Clear();
+        ItemList.Clear();
         alleGeinstantieerdePrefabs.Clear();
     }
 

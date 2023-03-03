@@ -207,6 +207,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 491d882c5cdee424e922788c74afe8f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  VirtualCamera: {fileID: 0}
+  Player: {fileID: 0}
 --- !u!1 &359260244
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,6 +257,7 @@ MonoBehaviour:
   ItemList: []
   EnemyList: []
   alleGeinstantieerdePrefabs: []
+  SetCameraFollow: {fileID: 310928975}
 --- !u!4 &359260246
 Transform:
   m_ObjectHideFlags: 0
