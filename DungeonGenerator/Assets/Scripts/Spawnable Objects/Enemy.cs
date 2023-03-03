@@ -8,18 +8,18 @@ public class Enemy : MonoBehaviour
 {
     private DungeonGenerator DungeonGenerator;
     public Transform MovePoint;
-    public float MoveSpeed = 5f;
+    public float MoveSpeed;
 
     public void Awake()
     {
-        MovePoint = transform.GetChild(0);
-        MovePoint.parent = null;
+        MovePoint = transform.GetChild(0);   
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        MovePoint.parent = DungeonGenerator.transform;
     }
 
     protected void Update()
     {
-
+        transform.position = Vector2.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
     }
 
     protected TileType GetTileTypeWithKey(Vector2Int _Vector2)
@@ -28,30 +28,38 @@ public class Enemy : MonoBehaviour
         return tiletip;
     }
 
+    protected bool GetItemTypeWithKey(Vector2Int _Vector2)
+	{
+        bool TurnOn = false;
+        for (int i = 0; i < DungeonGenerator.ItemList.Count; i++)
+		{
+            if (DungeonGenerator.ItemList[i].transform.position == new Vector3(_Vector2.x, _Vector2.y, 0f))
+			{
+                TurnOn = true;
+			} else
+			{
+                TurnOn = false;
+			}
+		}  
+        return TurnOn;
+	}
+
     protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
     {
-        if (GetTileTypeWithKey(new Vector2Int((int)transform.position.x + _xpos, (int)transform.position.y + _ypos)) == TileType.Floor)
+        Vector2Int vector2Int = new Vector2Int((int)transform.position.x + _xpos, (int)transform.position.y + _ypos);
+        if ((GetTileTypeWithKey(vector2Int) == TileType.Floor || GetTileTypeWithKey(vector2Int) == TileType.StartFloor) 
+            && GetItemTypeWithKey(vector2Int) == false)
         {
-            return new Vector2Int((int)transform.position.x + _xpos, (int)transform.position.y + _ypos);
+            return new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
         } 
         else
         {
-            return new Vector2Int(0, 0);
+            return new Vector2Int((int)MovePoint.position.x, (int)MovePoint.position.y);
         }
     }
-
-    [ContextMenu("Walk Enemies 10x")]
-    protected void RunPatrolAmountOfTimes()
-    {
-        for (int i = 0; i < 10; i++)
-        {
-            PatrolBehaviour();
-        }
-    }
-
 
     [ContextMenu("Walk Enemies")]
-    protected void PatrolBehaviour()
+    public void PatrolBehaviour()
     {
         Vector2Int[] WhichSideToMove = new Vector2Int[4];
         WhichSideToMove[0] = GetTileTypeAround(0, 1); //up
@@ -62,14 +70,18 @@ public class Enemy : MonoBehaviour
         List<Vector2Int> moveToVec = new List<Vector2Int>();
         for (int i = 0; i < WhichSideToMove.Length; i++)
         {
-            if (WhichSideToMove[i] != new Vector2Int((int)transform.position.x, (int)transform.position.y))
+            if (WhichSideToMove[i] == new Vector2Int((int)MovePoint.position.x, (int)MovePoint.position.y))
             {
+                moveToVec.Remove(WhichSideToMove[i]);
+            } 
+            else
+			{
                 moveToVec.Add(WhichSideToMove[i]);
-            }
+			}
         }
 
         int newDirection = Random.Range(0, moveToVec.Count);
-        MovePoint.position = new Vector3(WhichSideToMove[newDirection].x, WhichSideToMove[newDirection].y, 0f);
-        transform.position = Vector2.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
+        Vector3 posTile = new Vector3(WhichSideToMove[newDirection].x, WhichSideToMove[newDirection].y, 0f);
+        MovePoint.position = posTile;
     }
 }

@@ -36,4 +36,17 @@ public class TurnManager : MonoBehaviour
             IsPlayerTurn = true;
         }
     }
+
+    [ContextMenu("Walk Enemies")]
+    public void EnemyTurn()
+	{
+        if (IsOpponentTurn)
+		{
+            Enemy[] Enemies = FindObjectsOfType<Enemy>();
+            for(int i = 0; i < Enemies.Length; i++)
+			{
+                Enemies[i].PatrolBehaviour();
+            }
+		}
+	}
 }

@@ -130,4 +130,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovePoint: {fileID: 5083771299153435189}
-  MoveSpeed: 5
+  MoveSpeed: 1
