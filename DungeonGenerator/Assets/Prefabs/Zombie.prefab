@@ -99,7 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovePoint: {fileID: 5229137071236963678}
-  MoveSpeed: 1.2
+  MoveSpeed: 5
 --- !u!1 &2792392496903547407
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,7 +110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5229137071236963678}
   m_Layer: 0
-  m_Name: MovePoint
+  m_Name: MovePoint (Zombie)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

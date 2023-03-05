@@ -6,7 +6,7 @@ using Cinemachine;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public enum TileType { Floor , Wall , StartFloor }
+    public enum TileType { Floor , Wall }
 
     public GameObject MuurObject;
     public GameObject GrondObject;
@@ -98,7 +98,7 @@ public class DungeonGenerator : MonoBehaviour
         Room kamer = new Room(minX, maxX, minY, maxY);
 
         //kan de kamer in de dungeon passen zo niet genereer een nieuwe grote kamer
-        PlaatsStartKamerInKerker(kamer);
+        PlaatsKamerInKerker(kamer, TileType.Floor);
 
         for (int j = 0; j < kamerList.Count; j++)
         {
@@ -107,7 +107,6 @@ public class DungeonGenerator : MonoBehaviour
             instanceObj.transform.parent = gameObject.transform;
             alleGeinstantieerdePrefabs.Add(instanceObj);
         }
-        
     }
 
     private void AllLocateRooms()
@@ -128,7 +127,7 @@ public class DungeonGenerator : MonoBehaviour
             if (KanDeKamerInDeKerkerPassen(kamer))
             {
                 //returned een boolean waarde of de kamer geplaatst kan worden
-                PlaatsKamerInKerker(kamer);
+                PlaatsKamerInKerker(kamer, TileType.Floor);
             } else
             {
                 i--;
@@ -161,7 +160,6 @@ public class DungeonGenerator : MonoBehaviour
             GameObject obj = null;
             switch (keyvalue.Value)
             {
-                case TileType.StartFloor: obj = Instantiate(BeginGrondObject, posTile, Quaternion.identity, transform); break;
                 case TileType.Floor: obj = Instantiate(GrondObject, posTile, Quaternion.identity, transform); break;
                 case TileType.Wall: obj = Instantiate(MuurObject, posTile, Quaternion.identity, transform); break;
             }
@@ -225,25 +223,13 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    public void PlaatsStartKamerInKerker(Room _kamer)
+    public void PlaatsKamerInKerker(Room _kamer, TileType _tile)
     {
         for (int x = _kamer.minX; x <= _kamer.maxX; x++)
         {
             for (int y = _kamer.minY; y <= _kamer.maxY; y++)
             {
-                Kerker.Add(new Vector2Int(x, y), TileType.StartFloor);
-            }
-        }
-        kamerList.Add(_kamer);
-    }
-
-    public void PlaatsKamerInKerker(Room _kamer)
-    {
-        for (int x = _kamer.minX; x <= _kamer.maxX; x++)
-        {
-            for (int y = _kamer.minY; y <= _kamer.maxY; y++)
-            {
-                Kerker.Add(new Vector2Int(x, y), TileType.Floor);
+                Kerker.Add(new Vector2Int(x, y), _tile);
             }
         }
         kamerList.Add(_kamer);

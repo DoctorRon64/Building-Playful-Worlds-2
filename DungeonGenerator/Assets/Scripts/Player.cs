@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
 	public Transform MovePoint;
 	public Animator AnimatorController;
 	public float MoveSpeed = 5f;
+    public int StepsAmount;
 	public LayerMask WallLayer;
 	private TurnManager TurnManager;
     private DungeonGenerator DungeonGenerator;
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
 	private void Awake()
 	{
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
-        MovePoint.parent = null;
+        MovePoint.parent = DungeonGenerator.transform;
 		AnimatorController = GetComponent<Animator>();
         TurnManager = FindObjectOfType<TurnManager>();
 	}
@@ -29,10 +30,10 @@ public class Player : MonoBehaviour
         //ga naar movepoint
         transform.position = Vector3.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
 
-        if (TurnManager.IsPlayerTurn == true)
+        if (StepsAmount > 0 && TurnManager.IsPlayerTurn == true)
 		{
             //als ik niet op movepoint zit
-            if (Vector3.Distance(transform.position, MovePoint.position) <= .05f)
+            if (Vector3.Distance(transform.position, MovePoint.position) <= .01f)
             {
                 //als ik naar links of rechts beweeg
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
@@ -41,6 +42,7 @@ public class Player : MonoBehaviour
                     {
                         //zet movepoint positie
                         MovePoint.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
+                        StepsAmount--;
                     }
                 }
 
@@ -49,6 +51,7 @@ public class Player : MonoBehaviour
                     if (!Physics2D.OverlapCircle(MovePoint.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), .2f, WallLayer))
                     {
                         MovePoint.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
+                        StepsAmount--;
                     }
                 }
                 AnimatorController.SetBool("Moving", false);
@@ -58,5 +61,6 @@ public class Player : MonoBehaviour
                 AnimatorController.SetBool("Moving", true);
             }
         }
+        
 	}
 }

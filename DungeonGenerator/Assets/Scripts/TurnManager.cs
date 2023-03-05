@@ -8,45 +8,63 @@ public class TurnManager : MonoBehaviour
 {
     public bool IsPlayerTurn;
     public bool IsOpponentTurn;
-    public Button EndTurnButton;
+    public int AmountOfPlayerSteps;
+    public int AmountOfOpponentSteps;
+    public float OpponentTimeTurn;
+	public Button EndTurnButton;
+    public DungeonGenerator DungeonGenerator;
+	private List<GameObject> Enemies = new List<GameObject>();
 
     public void Start()
     {
-        EndTurnButton.interactable = true;
-        IsPlayerTurn = true;
-        IsOpponentTurn = false;
+        for (int i = 0 ; i < DungeonGenerator.EnemyList.Count; i++)
+		{
+            Enemies.Add(DungeonGenerator.EnemyList[i]);
+        }
+
+        EndOpponentTurn();
+    }
+
+    public void PlayerTurn() 
+    {
+        FindObjectOfType<Player>().StepsAmount = AmountOfPlayerSteps;
+    }
+
+    [ContextMenu("Walk Enemies")]
+    public IEnumerator EnemyTurn()
+	{
+        for (int i = 0; i < AmountOfOpponentSteps; i++)
+        {
+            MoveEnemy();
+            yield return new WaitForSeconds(OpponentTimeTurn);
+        }
+
+        EndOpponentTurn();
+
+        yield return new WaitForSeconds(0);
+    }
+
+    public void MoveEnemy()
+	{
+        for (int i = 0; i < Enemies.Count; i++)
+        {
+            Enemies[i].GetComponent<Enemy>().PatrolBehaviour();
+        }
     }
 
     public void EndPlayerTurn()
     {
-        if (IsPlayerTurn)
-        {
-            EndTurnButton.interactable = false;
-            IsPlayerTurn = false;
-            IsOpponentTurn = true;
-        }
+        EndTurnButton.interactable = false;
+        IsPlayerTurn = false;
+        IsOpponentTurn = true;
+        StartCoroutine(EnemyTurn());
     }
 
-    public void EndEnemyTurn()
+    public void EndOpponentTurn()
     {
-        if (IsOpponentTurn)
-        {
-            EndTurnButton.interactable = true;
-            IsOpponentTurn = false;
-            IsPlayerTurn = true;
-        }
+        EndTurnButton.interactable = true;
+        IsOpponentTurn = false;
+        IsPlayerTurn = true;
+        PlayerTurn();
     }
-
-    [ContextMenu("Walk Enemies")]
-    public void EnemyTurn()
-	{
-        if (IsOpponentTurn)
-		{
-            Enemy[] Enemies = FindObjectsOfType<Enemy>();
-            for(int i = 0; i < Enemies.Length; i++)
-			{
-                Enemies[i].PatrolBehaviour();
-            }
-		}
-	}
 }

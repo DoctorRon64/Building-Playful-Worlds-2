@@ -44,19 +44,16 @@ public class Enemy : MonoBehaviour
         return TurnOn;
 	}
 
-    protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
+	protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
     {
-        Vector2Int vector2Int = new Vector2Int((int)transform.position.x + _xpos, (int)transform.position.y + _ypos);
-        if ((GetTileTypeWithKey(vector2Int) == TileType.Floor || GetTileTypeWithKey(vector2Int) == TileType.StartFloor) 
-            && GetItemTypeWithKey(vector2Int) == false)
-        {
-            return new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
-        } 
-        else
-        {
-            return new Vector2Int((int)MovePoint.position.x, (int)MovePoint.position.y);
-        }
+        Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
+        return vector2Int;
     }
+
+    protected bool isFloorTile(Vector2Int _vector2)
+	{
+        return GetTileTypeWithKey(_vector2) == TileType.Floor;
+	}
 
     [ContextMenu("Walk Enemies")]
     public void PatrolBehaviour()
@@ -66,22 +63,15 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[1] = GetTileTypeAround(0, -1); //down
         WhichSideToMove[2] = GetTileTypeAround(1, 0); //right
         WhichSideToMove[3] = GetTileTypeAround(-1, 0); //left
+            
+        int newDir = Random.Range(0, WhichSideToMove.Length);
 
-        List<Vector2Int> moveToVec = new List<Vector2Int>();
-        for (int i = 0; i < WhichSideToMove.Length; i++)
+        while (!isFloorTile(WhichSideToMove[newDir]) || GetItemTypeWithKey(WhichSideToMove[newDir]) == true)
         {
-            if (WhichSideToMove[i] == new Vector2Int((int)MovePoint.position.x, (int)MovePoint.position.y))
-            {
-                moveToVec.Remove(WhichSideToMove[i]);
-            } 
-            else
-			{
-                moveToVec.Add(WhichSideToMove[i]);
-			}
-        }
+            newDir = Random.Range(0, WhichSideToMove.Length);
+		}
 
-        int newDirection = Random.Range(0, moveToVec.Count);
-        Vector3 posTile = new Vector3(WhichSideToMove[newDirection].x, WhichSideToMove[newDirection].y, 0f);
+		Vector3 posTile = new Vector3(WhichSideToMove[newDir].x, WhichSideToMove[newDir].y, 0f);
         MovePoint.position = posTile;
-    }
+	}
 }

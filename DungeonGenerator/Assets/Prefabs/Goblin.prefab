@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5083771299153435189}
   m_Layer: 0
-  m_Name: MovePoint
+  m_Name: MovePoint (Goblin)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,4 +130,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MovePoint: {fileID: 5083771299153435189}
-  MoveSpeed: 1
+  MoveSpeed: 5
