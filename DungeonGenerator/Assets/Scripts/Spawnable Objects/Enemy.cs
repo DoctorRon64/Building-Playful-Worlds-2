@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
 
     public void Awake()
     {
-        MovePoint = transform.GetChild(0);   
+        MovePoint = transform.GetChild(0);
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         MovePoint.parent = DungeonGenerator.transform;
     }
@@ -29,31 +29,36 @@ public class Enemy : MonoBehaviour
     }
 
     protected bool GetItemTypeWithKey(Vector2Int _Vector2)
-	{
+    {
         bool TurnOn = false;
         for (int i = 0; i < DungeonGenerator.ItemList.Count; i++)
-		{
+        {
             if (DungeonGenerator.ItemList[i].transform.position == new Vector3(_Vector2.x, _Vector2.y, 0f))
-			{
+            {
                 TurnOn = true;
-			} else
-			{
+            } 
+            else
+            {
                 TurnOn = false;
-			}
-		}  
+            }
+        }
         return TurnOn;
-	}
+    }
 
-	protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
+    protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
     {
         Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
         return vector2Int;
     }
-
     protected bool isFloorTile(Vector2Int _vector2)
-	{
+    {
         return GetTileTypeWithKey(_vector2) == TileType.Floor;
-	}
+    }
+
+    protected bool IsPlayerInHood()
+	{
+        return Vector2.Distance(transform.position, FindObjectOfType<Player>().transform.position) < 20f;
+    }
 
     [ContextMenu("Walk Enemies")]
     public void PatrolBehaviour()
@@ -64,14 +69,44 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[2] = GetTileTypeAround(1, 0); //right
         WhichSideToMove[3] = GetTileTypeAround(-1, 0); //left
             
-        int newDir = Random.Range(0, WhichSideToMove.Length);
+        if (IsPlayerInHood()) // && do not cross wall)
+		{
+            int newDir = EnemyFindPlayerBehaviour();
+            Vector3 posTile = new Vector3(WhichSideToMove[newDir].x, WhichSideToMove[newDir].y, 0f);
 
-        while (!isFloorTile(WhichSideToMove[newDir]) || GetItemTypeWithKey(WhichSideToMove[newDir]) == true)
-        {
-            newDir = Random.Range(0, WhichSideToMove.Length);
-		}
+            MovePoint.position = posTile;
+        }
+        else
+		{
+            int newDir = Random.Range(0, WhichSideToMove.Length);
 
-		Vector3 posTile = new Vector3(WhichSideToMove[newDir].x, WhichSideToMove[newDir].y, 0f);
-        MovePoint.position = posTile;
+            while (!isFloorTile(WhichSideToMove[newDir]) || GetItemTypeWithKey(WhichSideToMove[newDir]) == true)
+            {
+                newDir = Random.Range(0, WhichSideToMove.Length);
+            }
+
+            Vector3 posTile = new Vector3(WhichSideToMove[newDir].x, WhichSideToMove[newDir].y, 0f);
+            MovePoint.position = posTile;
+        }
 	}
+
+    public int EnemyFindPlayerBehaviour()
+	{
+        float dX = FindObjectOfType<Player>().transform.position.x - transform.position.x;
+        float dY = FindObjectOfType<Player>().transform.position.y - transform.position.y;
+
+        float absX = Mathf.Abs(dX);
+        float absY = Mathf.Abs(dY);
+
+        if (absX > absY)
+		{
+            if (dX > 0) { return 2; } // left
+            else { return 3; } //right
+		} 
+        else
+		{
+            if (dY > 0) { return 0; } // up
+            else { return 1; } //down
+        }
+    }
 }
