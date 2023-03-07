@@ -131,3 +131,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MovePoint: {fileID: 5083771299153435189}
   MoveSpeed: 5
+  DungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}

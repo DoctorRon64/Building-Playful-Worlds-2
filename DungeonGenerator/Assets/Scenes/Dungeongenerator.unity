@@ -374,23 +374,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MuurObject: {fileID: 2608334391189121977, guid: 9e28eb117066c9346a465240a41cb4db, type: 3}
   GrondObject: {fileID: 8795323497819996804, guid: 6544afbfcff718145a014bccba8f9dc5, type: 3}
-  BeginGrondObject: {fileID: 3235930149838102383, guid: 1c5bc94fae7c55c44bf91e66d1aa1ff2, type: 3}
   Player: {fileID: 2383609870657609980, guid: 234c2aacb0d507249a4805a7395de699, type: 3}
   Enemies:
-  - {fileID: 8886894022893398193, guid: 2d36e983e9cb0d94081b3c4eade8d8b4, type: 3}
-  - {fileID: 9008714809885482503, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+  - {fileID: 6942803884587900982, guid: 2d36e983e9cb0d94081b3c4eade8d8b4, type: 3}
+  - {fileID: 2327412251639442876, guid: 6097a14505728c146b4661f7348221b0, type: 3}
   Items:
-  - {fileID: 8785829784828488530, guid: f26c27a9b47918e4fbbb553a9ad7f40d, type: 3}
-  - {fileID: 822386097156613086, guid: 7ddc122e04228c549b126df06da68b9e, type: 3}
+  - {fileID: 8155079191700225503, guid: f26c27a9b47918e4fbbb553a9ad7f40d, type: 3}
+  - {fileID: 4597900678221044480, guid: 7ddc122e04228c549b126df06da68b9e, type: 3}
   GridBreedte: 100
   GridHoogte: 100
   minKamerGrote: 10
   maxKamerGrote: 14
-  MaxeObjectInRoom: 2
+  MaxObjectInRoom: 0
+  MinObjectInRoom: 3
   numKamers: 10
-  ItemList: []
-  EnemyList: []
   alleGeinstantieerdePrefabs: []
+  DungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
   SetCameraFollow: {fileID: 310928975}
 --- !u!4 &359260246
 Transform:
@@ -1329,4 +1328,4 @@ MonoBehaviour:
   AmountOfOpponentSteps: 3
   OpponentTimeTurn: 0.5
   EndTurnButton: {fileID: 118490393}
-  DungeonGenerator: {fileID: 359260245}
+  DungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}

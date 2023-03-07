@@ -9,11 +9,20 @@ public class Enemy : MonoBehaviour
     private DungeonGenerator DungeonGenerator;
     public Transform MovePoint;
     public float MoveSpeed;
+    private Player PlayerObj;
+    private Vector2Int[] WhichSideToMove = new Vector2Int[4];
+    public DungeonData DungeonData;
 
     public void Awake()
     {
+        WhichSideToMove[0] = new Vector2Int(0, 1); //up
+        WhichSideToMove[1] = new Vector2Int(0, -1); //down
+        WhichSideToMove[2] = new Vector2Int(1, 0); //right
+        WhichSideToMove[3] = new Vector2Int(-1, 0); //left
+        
         MovePoint = transform.GetChild(0);
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        PlayerObj = FindObjectOfType<Player>();
         MovePoint.parent = DungeonGenerator.transform;
     }
 
@@ -28,26 +37,27 @@ public class Enemy : MonoBehaviour
         return tiletip;
     }
 
-    protected bool GetItemTypeWithKey(Vector2Int _Vector2)
+    protected bool GetObjectTypeWithKey(Vector2Int _Vector2, List<GameObject> _list)
     {
-        bool TurnOn = false;
-        for (int i = 0; i < DungeonGenerator.ItemList.Count; i++)
+        for (int i = 0; i < _list.Count; i++)
         {
-            if (DungeonGenerator.ItemList[i].transform.position == new Vector3(_Vector2.x, _Vector2.y, 0f))
+            if (_list[i].transform.position == new Vector3(_Vector2.x, _Vector2.y, 0f))
             {
-                TurnOn = true;
-            } 
-            else
-            {
-                TurnOn = false;
+                return true;
             }
         }
-        return TurnOn;
+        return false;
     }
 
     protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
     {
         Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
+        return vector2Int;
+    }
+    protected Vector2Int GetTileTypeAround(Vector2Int direction)
+    {
+        Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + direction.x, (int)MovePoint.position.y + direction.y);
+        Debug.Log(vector2Int);
         return vector2Int;
     }
     protected bool isFloorTile(Vector2Int _vector2)
@@ -57,43 +67,46 @@ public class Enemy : MonoBehaviour
 
     protected bool IsPlayerInHood()
 	{
-        return Vector2.Distance(transform.position, FindObjectOfType<Player>().transform.position) < 20f;
+        return Vector2.Distance(transform.position, PlayerObj.transform.position) < 20f;
     }
 
-    [ContextMenu("Walk Enemies")]
     public void PatrolBehaviour()
-    {
-        Vector2Int[] WhichSideToMove = new Vector2Int[4];
-        WhichSideToMove[0] = GetTileTypeAround(0, 1); //up
-        WhichSideToMove[1] = GetTileTypeAround(0, -1); //down
-        WhichSideToMove[2] = GetTileTypeAround(1, 0); //right
-        WhichSideToMove[3] = GetTileTypeAround(-1, 0); //left
-            
-        if (IsPlayerInHood()) // && do not cross wall)
+    { 
+        if (IsPlayerInHood())
 		{
             int newDir = EnemyFindPlayerBehaviour();
-            Vector3 posTile = new Vector3(WhichSideToMove[newDir].x, WhichSideToMove[newDir].y, 0f);
 
+            while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
+            {
+                newDir = Random.Range(0, WhichSideToMove.Length);
+            }
+            
+            Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
             MovePoint.position = posTile;
         }
         else
 		{
             int newDir = Random.Range(0, WhichSideToMove.Length);
 
-            while (!isFloorTile(WhichSideToMove[newDir]) || GetItemTypeWithKey(WhichSideToMove[newDir]) == true)
+            
+            while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
             {
                 newDir = Random.Range(0, WhichSideToMove.Length);
             }
 
-            Vector3 posTile = new Vector3(WhichSideToMove[newDir].x, WhichSideToMove[newDir].y, 0f);
+            Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
             MovePoint.position = posTile;
         }
 	}
 
     public int EnemyFindPlayerBehaviour()
 	{
-        float dX = FindObjectOfType<Player>().transform.position.x - transform.position.x;
-        float dY = FindObjectOfType<Player>().transform.position.y - transform.position.y;
+        float dX = PlayerObj.transform.position.x - transform.position.x;
+        float dY = PlayerObj.transform.position.y - transform.position.y;
 
         float absX = Mathf.Abs(dX);
         float absY = Mathf.Abs(dY);

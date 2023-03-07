@@ -10,28 +10,28 @@ public class DungeonGenerator : MonoBehaviour
 
     public GameObject MuurObject;
     public GameObject GrondObject;
-    public GameObject BeginGrondObject;
 
     public GameObject Player;
-    public List<Enemy> Enemies = new List<Enemy>();
-    public List<Item> Items = new List<Item>();
+    public List<GameObject> Enemies = new List<GameObject>();
+    public List<GameObject> Items = new List<GameObject>();
 
     public int GridBreedte = 100;
     public int GridHoogte = 100;
 
     public int minKamerGrote = 3;
     public int maxKamerGrote = 7;
-    public int MaxeObjectInRoom = 3;
+
+    public int MaxObjectInRoom = 3;
+    public int MinObjectInRoom = 0;
 
     private Vector3 posRandomInRoom;
     public int numKamers = 10;
 
     public Dictionary<Vector2Int, TileType> Kerker = new Dictionary<Vector2Int, TileType>();
     public List<Room> kamerList = new List<Room>();
-    public List<GameObject> ItemList = new List<GameObject>();
-    public List<GameObject> EnemyList = new List<GameObject>();
     public List<GameObject> alleGeinstantieerdePrefabs = new List<GameObject>();
 
+    public DungeonData DungeonData;
     public SetCamera SetCameraFollow;
 
     private void Awake()
@@ -50,10 +50,10 @@ public class DungeonGenerator : MonoBehaviour
         ConnectRooms();
         AllLocateWalls();
 
-        SpwanRandomObjectInRoom(Enemies[0].gameObject, EnemyList);
-        SpwanRandomObjectInRoom(Enemies[1].gameObject, EnemyList);
-        SpwanRandomObjectInRoom(Items[0].gameObject, ItemList);
-        SpwanRandomObjectInRoom(Items[1].gameObject, ItemList);
+        SpwanRandomObjectInRoom(Enemies[0], DungeonData.EnemyList);
+        SpwanRandomObjectInRoom(Enemies[1], DungeonData.EnemyList);
+        SpwanRandomObjectInRoom(Items[0], DungeonData.ItemList);
+        SpwanRandomObjectInRoom(Items[1], DungeonData.ItemList);
 
         GenereerKerker();
         
@@ -70,8 +70,8 @@ public class DungeonGenerator : MonoBehaviour
 
         Kerker.Clear();
         kamerList.Clear();
-        EnemyList.Clear();
-        ItemList.Clear();
+        DungeonData.EnemyList.Clear();
+        DungeonData.ItemList.Clear();
         alleGeinstantieerdePrefabs.Clear();
     }
 
@@ -173,7 +173,7 @@ public class DungeonGenerator : MonoBehaviour
         for (int j = 0; j < kamerList.Count; j++)
         {
             //Random objects per kamer
-            int ObjectAmount = Random.Range(0, MaxeObjectInRoom);
+            int ObjectAmount = Random.Range(MinObjectInRoom, MaxObjectInRoom);
 
             bool samePos = false;
             //kijk of object op zelfde positie zit als een ander object
@@ -191,8 +191,7 @@ public class DungeonGenerator : MonoBehaviour
                 }
                 if (!samePos)
                 {
-                    GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity);
-                    instanceObj.transform.parent = gameObject.transform;
+                    GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity, gameObject.transform);
                     _list.Add(instanceObj);
                     alleGeinstantieerdePrefabs.Add(instanceObj);
                 }

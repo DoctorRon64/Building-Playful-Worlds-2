@@ -17,6 +17,5 @@ public class SetCamera : MonoBehaviour
     {
         Player = FindObjectOfType<Player>().transform;
         VirtualCamera.Follow = FindObjectOfType<Player>().transform;
-        Debug.Log("get player camera");
     }
 }

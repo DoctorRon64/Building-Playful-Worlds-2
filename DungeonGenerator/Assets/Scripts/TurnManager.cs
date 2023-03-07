@@ -12,16 +12,10 @@ public class TurnManager : MonoBehaviour
     public int AmountOfOpponentSteps;
     public float OpponentTimeTurn;
 	public Button EndTurnButton;
-    public DungeonGenerator DungeonGenerator;
-	private List<GameObject> Enemies = new List<GameObject>();
+    public DungeonData DungeonData;
 
     public void Start()
     {
-        for (int i = 0 ; i < DungeonGenerator.EnemyList.Count; i++)
-		{
-            Enemies.Add(DungeonGenerator.EnemyList[i]);
-        }
-
         EndOpponentTurn();
     }
 
@@ -46,9 +40,9 @@ public class TurnManager : MonoBehaviour
 
     public void MoveEnemy()
 	{
-        for (int i = 0; i < Enemies.Count; i++)
+        for (int i = 0; i < DungeonData.EnemyList.Count; i++)
         {
-            Enemies[i].GetComponent<Enemy>().PatrolBehaviour();
+            DungeonData.EnemyList[i].GetComponent<Enemy>().PatrolBehaviour();
         }
     }
 
