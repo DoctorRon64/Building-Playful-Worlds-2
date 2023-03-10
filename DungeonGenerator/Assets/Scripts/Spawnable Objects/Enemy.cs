@@ -71,24 +71,16 @@ public class Enemy : MonoBehaviour
     }
 
     public void PatrolBehaviour()
-    {
-        int checkNoSideToMove = 0;
+    { 
         if (IsPlayerInHood())
 		{
-            int newDir = EnemyFindPlayerBehaviour(); 
+            int newDir = EnemyFindPlayerBehaviour();
 
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
             {
-                newDir = Random.Range(0, 4);
-                checkNoSideToMove++;
-
-                if (checkNoSideToMove == 4)
-                {
-                    newDir = 4;  
-                    break;
-                }
+                newDir = Random.Range(0, WhichSideToMove.Length);
             }
             
             Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
@@ -96,20 +88,14 @@ public class Enemy : MonoBehaviour
         }
         else
 		{
-            int newDir = Random.Range(0, 4);
+            int newDir = Random.Range(0, WhichSideToMove.Length);
 
             
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
             {
-                newDir = Random.Range(0, 4);
-
-                if (checkNoSideToMove == 4)
-                {
-                    newDir = 4;
-                    break;
-                }
+                newDir = Random.Range(0, WhichSideToMove.Length);
             }
 
             Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
