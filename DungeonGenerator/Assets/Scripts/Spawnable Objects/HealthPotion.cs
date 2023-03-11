@@ -1,9 +1,11 @@
-﻿public class HealthPotion : Item
+﻿using UnityEngine;
+
+public class HealthPotion : Item
 {
     private void Awake()
     {
         IsConsumable = true;
-        ConsumeAmount = 10;
+        ConsumeAmount = Random.Range(1, 5);
     }
 
     public override void ItemBehaviour()

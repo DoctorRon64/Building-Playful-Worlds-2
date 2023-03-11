@@ -12,7 +12,6 @@ public class Enemy : MonoBehaviour
     private Player PlayerObj;
     private Vector2Int[] WhichSideToMove = new Vector2Int[4];
     public DungeonData DungeonData;
-
     public void Awake()
     {
         WhichSideToMove[0] = new Vector2Int(0, 1); //up
@@ -33,7 +32,7 @@ public class Enemy : MonoBehaviour
 
     protected TileType GetTileTypeWithKey(Vector2Int _Vector2)
     {
-        DungeonGenerator.Kerker.TryGetValue(_Vector2, out TileType tiletip);
+        DungeonGenerator.Dungeon.TryGetValue(_Vector2, out TileType tiletip);
         return tiletip;
     }
 

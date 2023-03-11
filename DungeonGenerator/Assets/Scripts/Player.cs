@@ -11,9 +11,15 @@ public class Player : MonoBehaviour
 	public LayerMask WallLayer;
 	private TurnManager TurnManager;
     private DungeonGenerator DungeonGenerator;
+    private Vector2Int[] WhichSideToMove = new Vector2Int[4];
 
-	private void Awake()
+    private void Awake()
 	{
+        WhichSideToMove[0] = new Vector2Int(0, 1); //up
+        WhichSideToMove[1] = new Vector2Int(0, -1); //down
+        WhichSideToMove[2] = new Vector2Int(1, 0); //right
+        WhichSideToMove[3] = new Vector2Int(-1, 0); //left
+
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         MovePoint.parent = DungeonGenerator.transform;
 		AnimatorController = GetComponent<Animator>();
@@ -25,7 +31,19 @@ public class Player : MonoBehaviour
 		PlayerMovement();
 	}
 
-	private void PlayerMovement()
+    private TileType GetTileTypeWithKey(Vector2Int _Vector2)
+    {
+        DungeonGenerator.Dungeon.TryGetValue(_Vector2, out TileType tiletip);
+        return tiletip;
+    }
+
+    private bool isFloorTile(Vector3 _vector3)
+    {
+        Vector2Int vector2 = new Vector2Int((int)_vector3.x, (int)_vector3.y);
+        return GetTileTypeWithKey(vector2) == TileType.Floor || GetTileTypeWithKey(vector2) == TileType.StartFloor;
+    }
+
+    private void PlayerMovement()
 	{
         //ga naar movepoint
         transform.position = Vector3.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
@@ -38,7 +56,7 @@ public class Player : MonoBehaviour
                 //als ik naar links of rechts beweeg
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
                 {
-                    if (!Physics2D.OverlapCircle(MovePoint.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f), .2f, WallLayer))
+                    if (isFloorTile(MovePoint.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f)) == true) 
                     {
                         //zet movepoint positie
                         MovePoint.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
@@ -48,8 +66,8 @@ public class Player : MonoBehaviour
 
                 else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
                 {
-                    if (!Physics2D.OverlapCircle(MovePoint.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f), .2f, WallLayer))
-                    {
+                    if (isFloorTile(MovePoint.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f)) == true)
+					{
                         MovePoint.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
                         StepsAmount--;
                     }

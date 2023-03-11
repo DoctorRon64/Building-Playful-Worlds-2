@@ -6,30 +6,31 @@ using Cinemachine;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public enum TileType { Floor , Wall }
+    public enum TileType { Floor , StartFloor, Wall }
 
-    public GameObject MuurObject;
-    public GameObject GrondObject;
+    public GameObject WallObject;
+    public GameObject FloorObject;
+    public GameObject StartFloorObject;
 
     public GameObject Player;
     public List<GameObject> Enemies = new List<GameObject>();
     public List<GameObject> Items = new List<GameObject>();
 
-    public int GridBreedte = 100;
-    public int GridHoogte = 100;
+    public int GridWidth = 100;
+    public int GridHeight = 100;
 
-    public int minKamerGrote = 3;
-    public int maxKamerGrote = 7;
+    public int minRoomSize = 3;
+    public int MaxRoomSize = 7;
 
     public int MaxObjectInRoom = 3;
     public int MinObjectInRoom = 0;
 
     private Vector3 posRandomInRoom;
-    public int numKamers = 10;
+    public int numRoom = 10;
 
-    public Dictionary<Vector2Int, TileType> Kerker = new Dictionary<Vector2Int, TileType>();
-    public List<Room> kamerList = new List<Room>();
-    public List<GameObject> alleGeinstantieerdePrefabs = new List<GameObject>();
+    public Dictionary<Vector2Int, TileType> Dungeon = new Dictionary<Vector2Int, TileType>();
+    public List<Room> RoomList = new List<Room>();
+    public List<GameObject> EveryInstantiatedPrefab = new List<GameObject>();
 
     public DungeonData DungeonData;
     public SetCamera SetCameraFollow;
@@ -42,93 +43,94 @@ public class DungeonGenerator : MonoBehaviour
     [ContextMenu("DungeonMaker")]
     public void Generate()
     {
-        Debug.Log("Begin de kerker te genereren");
-
         ClearDungeon();
         MakeStartRoom();
         AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
 
-        SpwanRandomObjectInRoom(Enemies[0], DungeonData.EnemyList);
-        SpwanRandomObjectInRoom(Enemies[1], DungeonData.EnemyList);
-        SpwanRandomObjectInRoom(Items[0], DungeonData.ItemList);
-        SpwanRandomObjectInRoom(Items[1], DungeonData.ItemList);
+        for (int i = 0; i < Enemies.Count; i++)
+		{
+            SpwanRandomObjectInRoom(Enemies[i], DungeonData.EnemyList);
+		}
+        for (int i = 0; i < Items.Count; i++)
+        {
+            SpwanRandomObjectInRoom(Items[i], DungeonData.ItemList);
+        }
 
-        GenereerKerker();
-        
+        GenerateDungeon();
         SetCameraFollow.GetPlayerCam();
     }
 
     [ContextMenu("Clear Dungeon")]
     public void ClearDungeon()
     {
-        for (int i = alleGeinstantieerdePrefabs.Count - 1; i >= 0; i--)
+        for (int i = EveryInstantiatedPrefab.Count - 1; i >= 0; i--)
         {
-            DestroyImmediate(alleGeinstantieerdePrefabs[i]);
+            DestroyImmediate(EveryInstantiatedPrefab[i]);
         }
 
-        Kerker.Clear();
-        kamerList.Clear();
+        Dungeon.Clear();
+        RoomList.Clear();
         DungeonData.EnemyList.Clear();
         DungeonData.ItemList.Clear();
-        alleGeinstantieerdePrefabs.Clear();
+        EveryInstantiatedPrefab.Clear();
     }
 
     private void ConnectRooms()
     {
-        // [0, 1, 2, {3}, 4, 5] 0, 1, 2
-        for (int i = 0; i < kamerList.Count; i++)
+        for (int i = 0; i < RoomList.Count; i++)
         {
-            Room room = kamerList[i];
-            Room otherRoom = kamerList[(i + Random.Range(1, kamerList.Count)) % kamerList.Count];
+            Room room = RoomList[i];
+            Room otherRoom = RoomList[(i + Random.Range(1, RoomList.Count)) % RoomList.Count];
             ConnectKamers(room, otherRoom);
         }
     }
 
     private void MakeStartRoom()
     {
-        //randomize de grotes van de kamers op basis van de gridsize
-        int minX = Random.Range(0, GridBreedte);
-        int maxX = minX + Random.Range(minKamerGrote, maxKamerGrote + 1);
-        int minY = Random.Range(0, GridHoogte);
-        int maxY = minY + Random.Range(minKamerGrote, maxKamerGrote + 1);
+        int minX = Random.Range(0, GridWidth);
+        int maxX = minX + Random.Range(minRoomSize, MaxRoomSize + 1);
+        int minY = Random.Range(0, GridHeight);
+        int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
-        //genereer kamer met deze exacte grotes
-        Room kamer = new Room(minX, maxX, minY, maxY);
-
-        //kan de kamer in de dungeon passen zo niet genereer een nieuwe grote kamer
-        PlaatsKamerInKerker(kamer, TileType.Floor);
-
-        for (int j = 0; j < kamerList.Count; j++)
+        Room Room = new Room(minX, maxX, minY, maxY);
+        for (int x = Room.minX; x <= Room.maxX; x++)
         {
-            posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
+            for (int y = Room.minY; y <= Room.maxY; y++)
+            {
+                Dungeon.Add(new Vector2Int(x, y), TileType.StartFloor);
+            }
+        }
+        RoomList.Add(Room);
+
+        for (int j = 0; j < RoomList.Count; j++)
+        {
+            posRandomInRoom = new Vector3(RoomList[j].GetRandomPositionInRoom().x, RoomList[j].GetRandomPositionInRoom().y, 0);
             GameObject instanceObj = Instantiate(Player, posRandomInRoom, Quaternion.identity);
             instanceObj.transform.parent = gameObject.transform;
-            alleGeinstantieerdePrefabs.Add(instanceObj);
+            EveryInstantiatedPrefab.Add(instanceObj);
         }
+
+        RoomList.RemoveAt(0);
     }
 
     private void AllLocateRooms()
     {
-        //for de hoeveelheid kamers erzijn
-        for (int i = 0; i < numKamers; i++)
+        for (int i = 0; i < numRoom; i++)
         {
-            //randomize de grotes van de kamers op basis van de gridsize
-            int minX = Random.Range(0, GridBreedte);
-            int maxX = minX + Random.Range(minKamerGrote, maxKamerGrote + 1);
-            int minY = Random.Range(0, GridHoogte);
-            int maxY = minY + Random.Range(minKamerGrote, maxKamerGrote + 1);
+            int minX = Random.Range(0, GridWidth);
+            int maxX = minX + Random.Range(minRoomSize, MaxRoomSize + 1);
+            int minY = Random.Range(0, GridHeight);
+            int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
-            //genereer kamer met deze exacte grotes
             Room kamer = new Room(minX, maxX, minY, maxY);
 
-            //kan de kamer in de dungeon passen zo niet genereer een nieuwe grote kamer
-            if (KanDeKamerInDeKerkerPassen(kamer))
+            if (CanRoomFitInsideDungeon(kamer))
             {
-                //returned een boolean waarde of de kamer geplaatst kan worden
-                PlaatsKamerInKerker(kamer, TileType.Floor);
-            } else
+                PlaceRoomInsideDungeon(kamer, TileType.Floor);
+            } 
+            else
             {
                 i--;
             }
@@ -136,51 +138,47 @@ public class DungeonGenerator : MonoBehaviour
     }
     private void AllLocateWalls()
     {
-        var keys = Kerker.Keys.ToList();
+        var keys = Dungeon.Keys.ToList();
         foreach (var kv in keys)
         {
             for (int x = -1; x <= 1; x++)
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    //if(Mathf.Abs(x) == Mathf.Abs(z)) { continue; }
                     Vector2Int newPos = kv + new Vector2Int(x, y);
-                    if (Kerker.ContainsKey(newPos)) { continue; }
-                    Kerker.Add(newPos, TileType.Wall);
+                    if (Dungeon.ContainsKey(newPos)) { continue; }
+                    Dungeon.Add(newPos, TileType.Wall);
                 }
             }
         }
     }
 
-    private void GenereerKerker()
+    private void GenerateDungeon()
     {
-        foreach (KeyValuePair<Vector2Int, TileType> keyvalue in Kerker)
+        foreach (KeyValuePair<Vector2Int, TileType> keyvalue in Dungeon)
         {
             Vector3 posTile = new Vector3(keyvalue.Key.x, keyvalue.Key.y, 0);
             GameObject obj = null;
             switch (keyvalue.Value)
             {
-                case TileType.Floor: obj = Instantiate(GrondObject, posTile, Quaternion.identity, transform); break;
-                case TileType.Wall: obj = Instantiate(MuurObject, posTile, Quaternion.identity, transform); break;
+                case TileType.Floor: obj = Instantiate(FloorObject, posTile, Quaternion.identity, transform); break;
+                case TileType.StartFloor: obj = Instantiate(StartFloorObject, posTile, Quaternion.identity, transform); break;
+                case TileType.Wall: obj = Instantiate(WallObject, posTile, Quaternion.identity, transform); break;
             }
-            alleGeinstantieerdePrefabs.Add(obj);
+            EveryInstantiatedPrefab.Add(obj);
         }
     }
 
     private void SpwanRandomObjectInRoom(GameObject _obj, List<GameObject> _list)
     {
-        //kijk door alle kamers heen
-        for (int j = 0; j < kamerList.Count; j++)
+        for (int j = 0; j < RoomList.Count; j++)
         {
-            //Random objects per kamer
             int ObjectAmount = Random.Range(MinObjectInRoom, MaxObjectInRoom);
 
             bool samePos = false;
-            //kijk of object op zelfde positie zit als een ander object
             for (int i = 0; i < ObjectAmount; i++)
             {
-                //random positie in kamer
-                posRandomInRoom = new Vector3(kamerList[j].GetRandomPositionInRoom().x, kamerList[j].GetRandomPositionInRoom().y, 0);
+                posRandomInRoom = new Vector3(RoomList[j].GetRandomPositionInRoom().x, RoomList[j].GetRandomPositionInRoom().y, 0);
                 foreach (GameObject _lookobjectinlist in _list)
                 {
                     if (posRandomInRoom == _lookobjectinlist.transform.position)
@@ -193,54 +191,53 @@ public class DungeonGenerator : MonoBehaviour
                 {
                     GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity, gameObject.transform);
                     _list.Add(instanceObj);
-                    alleGeinstantieerdePrefabs.Add(instanceObj);
+                    EveryInstantiatedPrefab.Add(instanceObj);
                 }
             }
         }
     }
 
-    private void ConnectKamers(Room _Kamer1, Room _Kamer2)
+    private void ConnectKamers(Room _Room1, Room _Room2)
     {
-        //beweeg een gang op de x as to hij een kamer raakt en dan op de y as tot hij de kamer berijkt
-        Vector2Int posEen = _Kamer1.GetCenter();
-        Vector2Int posTwee = _Kamer2.GetCenter();
-        int dirX = posTwee.x > posEen.x ? 1 : -1;
+        Vector2Int posOne = _Room1.GetCenter();
+        Vector2Int posTwo = _Room2.GetCenter();
+        int dirX = posTwo.x > posOne.x ? 1 : -1;
         int kamer1x = 0;
-        for (kamer1x = posEen.x; kamer1x != posTwee.x; kamer1x += dirX)
+        for (kamer1x = posOne.x; kamer1x != posTwo.x; kamer1x += dirX)
         {
-            Vector2Int position = new Vector2Int(kamer1x, posEen.y);
-            if (Kerker.ContainsKey(position)) { continue; }
-            Kerker.Add(position, TileType.Floor);
+            Vector2Int position = new Vector2Int(kamer1x, posOne.y);
+            if (Dungeon.ContainsKey(position)) { continue; }
+            Dungeon.Add(position, TileType.Floor);
         }
 
-        int dirY = posTwee.y > posEen.y ? 1 : -1;
-        for (int y = posEen.y; y != posTwee.y; y += dirY)
+        int dirY = posTwo.y > posOne.y ? 1 : -1;
+        for (int y = posOne.y; y != posTwo.y; y += dirY)
         {
             Vector2Int position = new Vector2Int(kamer1x, y);
-            if (Kerker.ContainsKey(position)) { continue; }
-            Kerker.Add(position, TileType.Floor);
+            if (Dungeon.ContainsKey(position)) { continue; }
+            Dungeon.Add(position, TileType.Floor);
         }
     }
 
-    public void PlaatsKamerInKerker(Room _kamer, TileType _tile)
+    public void PlaceRoomInsideDungeon(Room _Room, TileType _tile)
     {
-        for (int x = _kamer.minX; x <= _kamer.maxX; x++)
+        for (int x = _Room.minX; x <= _Room.maxX; x++)
         {
-            for (int y = _kamer.minY; y <= _kamer.maxY; y++)
+            for (int y = _Room.minY; y <= _Room.maxY; y++)
             {
-                Kerker.Add(new Vector2Int(x, y), _tile);
+                Dungeon.Add(new Vector2Int(x, y), _tile);
             }
         }
-        kamerList.Add(_kamer);
+        RoomList.Add(_Room);
     }
 
-    public bool KanDeKamerInDeKerkerPassen(Room _kamer)
+    public bool CanRoomFitInsideDungeon(Room _Room)
     {
-        for(int x = _kamer.minX - 1; x <= _kamer.maxX + 1; x++)
+        for(int x = _Room.minX - 1; x <= _Room.maxX + 1; x++)
         {
-            for (int y = _kamer.minY - 1; y <= _kamer.maxY + 1; y++)
+            for (int y = _Room.minY - 1; y <= _Room.maxY + 1; y++)
             {
-                if (Kerker.ContainsKey(new Vector2Int(x, y))) { return false; }
+                if (Dungeon.ContainsKey(new Vector2Int(x, y))) { return false; }
             }
         }
         return true;

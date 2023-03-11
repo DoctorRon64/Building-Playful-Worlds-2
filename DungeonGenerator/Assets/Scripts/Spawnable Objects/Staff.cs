@@ -1,11 +1,11 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-public class Sword : Item
+public class Staff : Item
 {
     private void Awake()
     {
-        IsWeapon = true;
-        WeaponDamage = Random.Range(1, 5);
+        IsMagic = true;
+        MagicDamage = Random.Range(1, 5);
     }
 
     public override void ItemBehaviour()

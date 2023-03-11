@@ -5,8 +5,14 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
     public bool IsConsumable;
+    public bool IsWeapon;
+    public bool IsMagic;
+
     public int ConsumeAmount;
-    public virtual void ItemBehaviour()
+    public int WeaponDamage;
+    public int MagicDamage;
+
+	public virtual void ItemBehaviour()
     {
 
     }
