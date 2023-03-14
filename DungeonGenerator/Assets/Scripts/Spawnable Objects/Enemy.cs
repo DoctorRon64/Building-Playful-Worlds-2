@@ -53,10 +53,10 @@ public class Enemy : MonoBehaviour
         Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
         return vector2Int;
     }
+
     protected Vector2Int GetTileTypeAround(Vector2Int direction)
     {
         Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + direction.x, (int)MovePoint.position.y + direction.y);
-        Debug.Log(vector2Int);
         return vector2Int;
     }
     protected bool isFloorTile(Vector2Int _vector2)

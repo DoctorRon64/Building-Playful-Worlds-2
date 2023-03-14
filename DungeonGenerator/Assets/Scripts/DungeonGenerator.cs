@@ -95,14 +95,7 @@ public class DungeonGenerator : MonoBehaviour
         int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
         Room Room = new Room(minX, maxX, minY, maxY);
-        for (int x = Room.minX; x <= Room.maxX; x++)
-        {
-            for (int y = Room.minY; y <= Room.maxY; y++)
-            {
-                Dungeon.Add(new Vector2Int(x, y), TileType.StartFloor);
-            }
-        }
-        RoomList.Add(Room);
+        PlaceRoomInsideDungeon(Room, TileType.StartFloor);
 
         for (int j = 0; j < RoomList.Count; j++)
         {
@@ -112,7 +105,7 @@ public class DungeonGenerator : MonoBehaviour
             EveryInstantiatedPrefab.Add(instanceObj);
         }
 
-        RoomList.RemoveAt(0);
+        //RoomList.RemoveAt(0);
     }
 
     private void AllLocateRooms()
