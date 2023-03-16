@@ -35,7 +35,6 @@ public class DungeonGenerator : MonoBehaviour
 
     public DungeonData DungeonData;
     public SetCamera SetCameraFollow;
-
     private void Awake()
     {
         Generate();
@@ -163,7 +162,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void SpwanRandomObjectInRoom(GameObject _obj, List<GameObject> _list)
+    private void SpwanRandomObjectInRoom(GameObject _obj, List<Item> _list)
     {
         for (int j = 0; j < EnemiesCanSpawnRoomList.Count; j++)
         {
@@ -173,7 +172,7 @@ public class DungeonGenerator : MonoBehaviour
             for (int i = 0; i < ObjectAmount; i++)
             {
                 posRandomInRoom = new Vector3(EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().x, EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().y, 0);
-                foreach (GameObject _lookobjectinlist in _list)
+                foreach (Item _lookobjectinlist in _list)
                 {
                     if (posRandomInRoom == _lookobjectinlist.transform.position)
                     {
@@ -184,7 +183,35 @@ public class DungeonGenerator : MonoBehaviour
                 if (!samePos)
                 {
                     GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity, gameObject.transform);
-                    _list.Add(instanceObj);
+                    _list.Add(instanceObj.GetComponent<Item>());
+                    EveryInstantiatedPrefab.Add(instanceObj);
+                }
+            }
+        }
+    }
+
+    private void SpwanRandomObjectInRoom(GameObject _obj, List<Enemy> _list)
+    {
+        for (int j = 0; j < EnemiesCanSpawnRoomList.Count; j++)
+        {
+            int ObjectAmount = Random.Range(MinObjectInRoom, MaxObjectInRoom);
+
+            bool samePos = false;
+            for (int i = 0; i < ObjectAmount; i++)
+            {
+                posRandomInRoom = new Vector3(EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().x, EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().y, 0);
+                foreach (Enemy _lookobjectinlist in _list)
+                {
+                    if (posRandomInRoom == _lookobjectinlist.transform.position)
+                    {
+                        samePos = true;
+                        break;
+                    }
+                }
+                if (!samePos)
+                {
+                    GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity, gameObject.transform);
+                    _list.Add(instanceObj.GetComponent<Enemy>());
                     EveryInstantiatedPrefab.Add(instanceObj);
                 }
             }

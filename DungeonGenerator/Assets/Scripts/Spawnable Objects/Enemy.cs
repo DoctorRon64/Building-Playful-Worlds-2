@@ -7,10 +7,10 @@ using UnityEngine.Timeline;
 public class Enemy : MonoBehaviour
 {
     private DungeonGenerator DungeonGenerator;
-    public Transform MovePoint;
+    public Vector2 MovePoint;
     public float MoveSpeed;
     private Player PlayerObj;
-    private Vector2Int[] WhichSideToMove = new Vector2Int[4];
+    private Vector2Int[] WhichSideToMove = new Vector2Int[5];
     public DungeonData DungeonData;
     public void Awake()
     {
@@ -18,16 +18,16 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[1] = new Vector2Int(0, -1); //down
         WhichSideToMove[2] = new Vector2Int(1, 0); //right
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
+        WhichSideToMove[4] = new Vector2Int(0, 0);
         
-        MovePoint = transform.GetChild(0);
+        MovePoint = transform.position;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         PlayerObj = FindObjectOfType<Player>();
-        MovePoint.parent = DungeonGenerator.transform;
     }
 
     protected void Update()
     {
-        transform.position = Vector2.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, MovePoint, MoveSpeed * Time.deltaTime);
     }
 
     protected TileType GetTileTypeWithKey(Vector2Int _Vector2)
@@ -36,7 +36,7 @@ public class Enemy : MonoBehaviour
         return tiletip;
     }
 
-    protected bool GetObjectTypeWithKey(Vector2Int _Vector2, List<GameObject> _list)
+    protected bool GetObjectTypeWithKey(Vector2Int _Vector2, List<Item> _list)
     {
         for (int i = 0; i < _list.Count; i++)
         {
@@ -48,15 +48,28 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
+    protected bool GetObjectTypeWithKey(Vector2Int _Vector2, List<Enemy> _list)
+    {
+        Vector3 checkDir = new Vector3(_Vector2.x, _Vector2.y, 0f);
+        for (int i = 0; i < _list.Count; i++)
+        {
+            if (_list[i].transform.position == checkDir || _list[i].MovePoint == (Vector2)checkDir)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
     {
-        Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + _xpos, (int)MovePoint.position.y + _ypos);
+        Vector2Int vector2Int = new Vector2Int((int)MovePoint.x + _xpos, (int)MovePoint.y + _ypos);
         return vector2Int;
     }
 
     protected Vector2Int GetTileTypeAround(Vector2Int direction)
     {
-        Vector2Int vector2Int = new Vector2Int((int)MovePoint.position.x + direction.x, (int)MovePoint.position.y + direction.y);
+        Vector2Int vector2Int = new Vector2Int((int)MovePoint.x + direction.x, (int)MovePoint.y + direction.y);
         return vector2Int;
     }
     protected bool isFloorTile(Vector2Int _vector2)
@@ -70,35 +83,49 @@ public class Enemy : MonoBehaviour
     }
 
     public void PatrolBehaviour()
-    { 
+    {
+        int check = 0;
         if (IsPlayerInHood())
 		{
             int newDir = EnemyFindPlayerBehaviour();
-
+           
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
             {
-                newDir = Random.Range(0, WhichSideToMove.Length);
+                newDir = Random.Range(0, WhichSideToMove.Length - 1);
+                
+                check++;
+                if (check >= 4)
+                {
+                    newDir = 4;
+                    break;
+                }
             }
             
             Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
-            MovePoint.position = posTile;
+            MovePoint = posTile;
         }
         else
 		{
-            int newDir = Random.Range(0, WhichSideToMove.Length);
+            int newDir = Random.Range(0, WhichSideToMove.Length - 1);
 
-            
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
                 GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
             {
-                newDir = Random.Range(0, WhichSideToMove.Length);
+                newDir = Random.Range(0, WhichSideToMove.Length - 1);
+
+                check++;
+                if (check >= 4)
+                {
+                    newDir = 4;
+                    break;
+                }
             }
 
             Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
-            MovePoint.position = posTile;
+            MovePoint = posTile;
         }
 	}
 

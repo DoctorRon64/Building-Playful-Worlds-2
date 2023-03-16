@@ -4,13 +4,16 @@ using static DungeonGenerator;
 
 public class Player : MonoBehaviour
 {
-	public Transform MovePoint;
+	public Vector2 MovePoint;
 	public Animator AnimatorController;
 	public float MoveSpeed = 5f;
     public int StepsAmount;
 	public LayerMask WallLayer;
+
 	private TurnManager TurnManager;
     private DungeonGenerator DungeonGenerator;
+    private Inventory Inventory;
+
     private Vector2Int[] WhichSideToMove = new Vector2Int[4];
 
     private void Awake()
@@ -20,11 +23,12 @@ public class Player : MonoBehaviour
         WhichSideToMove[2] = new Vector2Int(1, 0); //right
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
 
+        MovePoint = transform.position;
+        Inventory = GetComponent<Inventory>();
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
-        MovePoint.parent = DungeonGenerator.transform;
-		AnimatorController = GetComponent<Animator>();
         TurnManager = FindObjectOfType<TurnManager>();
-	}
+        AnimatorController = GetComponent<Animator>();
+    }
 
 	private void Update()
 	{
@@ -46,30 +50,37 @@ public class Player : MonoBehaviour
     private void PlayerMovement()
 	{
         //ga naar movepoint
-        transform.position = Vector3.MoveTowards(transform.position, MovePoint.position, MoveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, MovePoint, MoveSpeed * Time.deltaTime);
 
         if (StepsAmount > 0 && TurnManager.IsPlayerTurn == true)
 		{
             //als ik niet op movepoint zit
-            if (Vector3.Distance(transform.position, MovePoint.position) <= .01f)
+            if (Vector3.Distance(transform.position, MovePoint) <= .01f)
             {
                 //als ik naar links of rechts beweeg
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
                 {
-                    if (isFloorTile(MovePoint.position + new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f)) == true) 
+                    if (isFloorTile(MovePoint + new Vector2(Input.GetAxisRaw("Horizontal"), 0f)) == true) 
                     {
                         //zet movepoint positie
-                        MovePoint.position += new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
+                        MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
+                        Inventory.IfPlayerOnItem();
+
                         StepsAmount--;
+                        TurnManager.GetIfPlayerWalked();
+                        
                     }
                 }
 
                 else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
                 {
-                    if (isFloorTile(MovePoint.position + new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f)) == true)
+                    if (isFloorTile(MovePoint + new Vector2(0f, Input.GetAxisRaw("Vertical"))) == true)
 					{
-                        MovePoint.position += new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
+                        MovePoint += new Vector2(0f, Input.GetAxisRaw("Vertical"));
+                        Inventory.IfPlayerOnItem();
+
                         StepsAmount--;
+                        TurnManager.GetIfPlayerWalked();
                     }
                 }
                 AnimatorController.SetBool("Moving", false);

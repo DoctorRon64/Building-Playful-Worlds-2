@@ -24,6 +24,14 @@ public class TurnManager : MonoBehaviour
         FindObjectOfType<Player>().StepsAmount = AmountOfPlayerSteps;
     }
 
+    public void GetIfPlayerWalked()
+    {
+        if (FindObjectOfType<Player>().StepsAmount <= 0)
+        {
+            EndPlayerTurn();
+        }
+    }
+
     [ContextMenu("Walk Enemies")]
     public IEnumerator EnemyTurn()
 	{
