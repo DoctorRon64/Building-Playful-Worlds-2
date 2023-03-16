@@ -30,6 +30,7 @@ public class DungeonGenerator : MonoBehaviour
 
     public Dictionary<Vector2Int, TileType> Dungeon = new Dictionary<Vector2Int, TileType>();
     public List<Room> RoomList = new List<Room>();
+    public List<Room> EnemiesCanSpawnRoomList = new List<Room>();
     public List<GameObject> EveryInstantiatedPrefab = new List<GameObject>();
 
     public DungeonData DungeonData;
@@ -95,7 +96,7 @@ public class DungeonGenerator : MonoBehaviour
         int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
         Room Room = new Room(minX, maxX, minY, maxY);
-        PlaceRoomInsideDungeon(Room, TileType.StartFloor);
+        PlaceRoomInsideDungeon(Room, TileType.StartFloor, false);
 
         for (int j = 0; j < RoomList.Count; j++)
         {
@@ -121,7 +122,7 @@ public class DungeonGenerator : MonoBehaviour
 
             if (CanRoomFitInsideDungeon(kamer))
             {
-                PlaceRoomInsideDungeon(kamer, TileType.Floor);
+                PlaceRoomInsideDungeon(kamer, TileType.Floor, true);
             } 
             else
             {
@@ -164,14 +165,14 @@ public class DungeonGenerator : MonoBehaviour
 
     private void SpwanRandomObjectInRoom(GameObject _obj, List<GameObject> _list)
     {
-        for (int j = 0; j < RoomList.Count; j++)
+        for (int j = 0; j < EnemiesCanSpawnRoomList.Count; j++)
         {
             int ObjectAmount = Random.Range(MinObjectInRoom, MaxObjectInRoom);
 
             bool samePos = false;
             for (int i = 0; i < ObjectAmount; i++)
             {
-                posRandomInRoom = new Vector3(RoomList[j].GetRandomPositionInRoom().x, RoomList[j].GetRandomPositionInRoom().y, 0);
+                posRandomInRoom = new Vector3(EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().x, EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().y, 0);
                 foreach (GameObject _lookobjectinlist in _list)
                 {
                     if (posRandomInRoom == _lookobjectinlist.transform.position)
@@ -212,7 +213,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    public void PlaceRoomInsideDungeon(Room _Room, TileType _tile)
+    public void PlaceRoomInsideDungeon(Room _Room, TileType _tile, bool _CanObjectSpawnInRoom)
     {
         for (int x = _Room.minX; x <= _Room.maxX; x++)
         {
@@ -221,6 +222,7 @@ public class DungeonGenerator : MonoBehaviour
                 Dungeon.Add(new Vector2Int(x, y), _tile);
             }
         }
+        if (_CanObjectSpawnInRoom) { EnemiesCanSpawnRoomList.Add(_Room); }
         RoomList.Add(_Room);
     }
 

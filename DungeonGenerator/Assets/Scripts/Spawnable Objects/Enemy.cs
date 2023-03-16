@@ -61,7 +61,7 @@ public class Enemy : MonoBehaviour
     }
     protected bool isFloorTile(Vector2Int _vector2)
     {
-        return GetTileTypeWithKey(_vector2) == TileType.Floor;
+        return GetTileTypeWithKey(_vector2) == TileType.Floor || GetTileTypeWithKey(_vector2) == TileType.StartFloor;
     }
 
     protected bool IsPlayerInHood()

@@ -487,11 +487,11 @@ MonoBehaviour:
   - {fileID: 6053017287427448636, guid: e0045ff0417ee9e45a5345a0abb7fcf3, type: 3}
   GridWidth: 100
   GridHeight: 100
-  minRoomSize: 3
-  MaxRoomSize: 7
+  minRoomSize: 10
+  MaxRoomSize: 15
   MaxObjectInRoom: 0
   MinObjectInRoom: 3
-  numRoom: 10
+  numRoom: 7
   EveryInstantiatedPrefab: []
   DungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
   SetCameraFollow: {fileID: 310928975}
