@@ -12,8 +12,10 @@ public class Item : MonoBehaviour
     public int WeaponDamage;
     public int MagicDamage;
 
-	public virtual void ItemBehaviour()
-    {
+    public DungeonData dungeonData;
 
+    public void ItemPickUped()
+    {
+        gameObject.SetActive(false);
     }
 }

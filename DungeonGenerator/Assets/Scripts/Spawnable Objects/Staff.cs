@@ -17,9 +17,4 @@ public class Staff : Item
             MagicDamage = Random.Range(1, 5);
         }
     }
-
-    public override void ItemBehaviour()
-    {
-        base.ItemBehaviour();
-    }
 }

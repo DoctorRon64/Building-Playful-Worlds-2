@@ -8,25 +8,29 @@ public class TurnManager : MonoBehaviour
 {
     public bool IsPlayerTurn;
     public bool IsOpponentTurn;
+
     public int AmountOfPlayerSteps;
     public int AmountOfOpponentSteps;
+
     public float OpponentTimeTurn;
 	public Button EndTurnButton;
     public DungeonData DungeonData;
+    private Player player;
 
     public void Start()
     {
+        player = FindObjectOfType<Player>();
         EndOpponentTurn();
     }
 
     public void PlayerTurn() 
     {
-        FindObjectOfType<Player>().StepsAmount = AmountOfPlayerSteps;
+        player.StepsAmount = AmountOfPlayerSteps;
     }
 
     public void GetIfPlayerWalked()
     {
-        if (FindObjectOfType<Player>().StepsAmount <= 0)
+        if (player.StepsAmount <= 0)
         {
             EndPlayerTurn();
         }
@@ -51,6 +55,17 @@ public class TurnManager : MonoBehaviour
         for (int i = 0; i < DungeonData.EnemyList.Count; i++)
         {
             DungeonData.EnemyList[i].GetComponent<Enemy>().PatrolBehaviour();
+        }
+    }
+
+    public void CheckIfPlayerCollectsItem()
+    {
+        for (int i = 0; i < DungeonData.ItemList.Count; i++)
+        {
+            if (DungeonData.ItemList[i].transform.position == player.transform.position)
+            {
+                DungeonData.ItemList[i].ItemPickUped();
+            }
         }
     }
 

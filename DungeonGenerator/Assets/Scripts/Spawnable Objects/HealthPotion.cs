@@ -7,9 +7,4 @@ public class HealthPotion : Item
         IsConsumable = true;
         ConsumeAmount = Random.Range(1, 5);
     }
-
-    public override void ItemBehaviour()
-    {
-        base.ItemBehaviour();
-    }
 }

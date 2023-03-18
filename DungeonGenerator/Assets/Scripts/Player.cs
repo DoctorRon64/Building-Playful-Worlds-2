@@ -65,10 +65,10 @@ public class Player : MonoBehaviour
                         //zet movepoint positie
                         MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
                         Inventory.IfPlayerOnItem();
+                        TurnManager.CheckIfPlayerCollectsItem();
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
-                        
                     }
                 }
 
@@ -78,6 +78,7 @@ public class Player : MonoBehaviour
 					{
                         MovePoint += new Vector2(0f, Input.GetAxisRaw("Vertical"));
                         Inventory.IfPlayerOnItem();
+                        TurnManager.CheckIfPlayerCollectsItem();
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();

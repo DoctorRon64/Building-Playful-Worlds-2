@@ -103,3 +103,4 @@ MonoBehaviour:
   ConsumeAmount: 0
   WeaponDamage: 0
   MagicDamage: 0
+  dungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}

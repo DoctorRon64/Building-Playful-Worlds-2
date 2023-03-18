@@ -7,9 +7,4 @@ public class Sword : Item
         IsWeapon = true;
         WeaponDamage = Random.Range(1, 5);
     }
-
-    public override void ItemBehaviour()
-    {
-        base.ItemBehaviour();
-    }
 }
