@@ -63,8 +63,8 @@ public class Player : MonoBehaviour
                     if (isFloorTile(MovePoint + new Vector2(Input.GetAxisRaw("Horizontal"), 0f)) == true) 
                     {
                         //zet movepoint positie
-                        MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
                         Inventory.IfPlayerOnItem();
+                        MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
                         TurnManager.CheckIfPlayerCollectsItem();
 
                         StepsAmount--;
@@ -76,8 +76,8 @@ public class Player : MonoBehaviour
                 {
                     if (isFloorTile(MovePoint + new Vector2(0f, Input.GetAxisRaw("Vertical"))) == true)
 					{
-                        MovePoint += new Vector2(0f, Input.GetAxisRaw("Vertical"));
                         Inventory.IfPlayerOnItem();
+                        MovePoint += new Vector2(0f, Input.GetAxisRaw("Vertical"));
                         TurnManager.CheckIfPlayerCollectsItem();
 
                         StepsAmount--;

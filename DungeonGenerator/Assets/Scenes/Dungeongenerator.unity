@@ -1469,7 +1469,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsPlayerTurn: 0
   IsOpponentTurn: 0
-  AmountOfPlayerSteps: 3
+  AmountOfPlayerSteps: 5
   AmountOfOpponentSteps: 3
   OpponentTimeTurn: 0.1
   EndTurnButton: {fileID: 118490393}
