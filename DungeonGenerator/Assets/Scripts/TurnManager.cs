@@ -58,17 +58,6 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    public void CheckIfPlayerCollectsItem()
-    {
-        for (int i = 0; i < DungeonData.ItemList.Count; i++)
-        {
-            if (DungeonData.ItemList[i].transform.position == player.transform.position)
-            {
-                DungeonData.ItemList[i].ItemPickUped();
-            }
-        }
-    }
-
     public void EndPlayerTurn()
     {
         EndTurnButton.interactable = false;

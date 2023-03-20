@@ -8,11 +8,11 @@ public class Player : MonoBehaviour
 	public Animator AnimatorController;
 	public float MoveSpeed = 5f;
     public int StepsAmount;
-	public LayerMask WallLayer;
 
 	private TurnManager TurnManager;
     private DungeonGenerator DungeonGenerator;
-    private Inventory Inventory;
+    private InventoryManager Inventory;
+    public DungeonData dungeonData;
 
     private Vector2Int[] WhichSideToMove = new Vector2Int[4];
 
@@ -24,9 +24,9 @@ public class Player : MonoBehaviour
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
 
         MovePoint = transform.position;
-        Inventory = GetComponent<Inventory>();
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         TurnManager = FindObjectOfType<TurnManager>();
+        Inventory = FindObjectOfType<InventoryManager>();
         AnimatorController = GetComponent<Animator>();
     }
 
@@ -60,12 +60,11 @@ public class Player : MonoBehaviour
                 //als ik naar links of rechts beweeg
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
                 {
+                    GetItemWhenWalkedOn();
                     if (isFloorTile(MovePoint + new Vector2(Input.GetAxisRaw("Horizontal"), 0f)) == true) 
                     {
                         //zet movepoint positie
-                        Inventory.IfPlayerOnItem();
                         MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
-                        TurnManager.CheckIfPlayerCollectsItem();
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
@@ -74,11 +73,10 @@ public class Player : MonoBehaviour
 
                 else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
                 {
+                    GetItemWhenWalkedOn();
                     if (isFloorTile(MovePoint + new Vector2(0f, Input.GetAxisRaw("Vertical"))) == true)
 					{
-                        Inventory.IfPlayerOnItem();
                         MovePoint += new Vector2(0f, Input.GetAxisRaw("Vertical"));
-                        TurnManager.CheckIfPlayerCollectsItem();
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
@@ -93,4 +91,15 @@ public class Player : MonoBehaviour
         }
         
 	}
+
+    public void GetItemWhenWalkedOn()
+    {
+        for (int i = 0; i < dungeonData.ItemList.Count; i++)
+        {
+            if (gameObject.transform.position == dungeonData.ItemList[i].transform.position)
+            {
+                Inventory.PickupItem(dungeonData.ItemList[i]);
+            }
+        }
+    }
 }

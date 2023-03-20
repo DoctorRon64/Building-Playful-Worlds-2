@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2245221460811023241}
   - component: {fileID: 7160742426811844592}
   - component: {fileID: 2536615604619997793}
-  - component: {fileID: 6202445043717142020}
   - component: {fileID: 6154377657327903804}
   m_Layer: 0
   m_Name: Player
@@ -107,19 +106,6 @@ MonoBehaviour:
   WallLayer:
     serializedVersion: 2
     m_Bits: 64
---- !u!114 &6202445043717142020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2383609870657609980}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae4381f02bb8fbd4ba98beb39e7ff9ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ItemInventory: []
   dungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
 --- !u!95 &6154377657327903804
 Animator:

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Item : MonoBehaviour
 {
@@ -12,10 +13,14 @@ public class Item : MonoBehaviour
     public int WeaponDamage;
     public int MagicDamage;
 
+    public Sprite icon;
+    public event System.Action<Item> OnUseEvent;
+    public bool isConsumable = false;
+
     public DungeonData dungeonData;
 
-    public void ItemPickUped()
+    public virtual void Use()
     {
-        gameObject.SetActive(false);
+        OnUseEvent?.Invoke(this);
     }
 }
