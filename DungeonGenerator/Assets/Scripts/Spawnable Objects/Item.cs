@@ -7,15 +7,12 @@ public class Item : MonoBehaviour
 {
     public bool IsConsumable;
     public bool IsWeapon;
-    public bool IsMagic;
 
+    public int AttackDamage;
     public int ConsumeAmount;
-    public int WeaponDamage;
-    public int MagicDamage;
 
     public Sprite icon;
     public event System.Action<Item> OnUseEvent;
-    public bool isConsumable = false;
 
     public DungeonData dungeonData;
 

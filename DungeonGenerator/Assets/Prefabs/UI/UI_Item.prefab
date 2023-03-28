@@ -90,3 +90,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dungeonData: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
+  OnlyFloors:
+    serializedVersion: 2
+    m_Bits: 128

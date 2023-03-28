@@ -1,4 +1,6 @@
-﻿public class Goblin : Enemy
+﻿using UnityEngine;
+
+public class Goblin : Enemy
 {
-    
+
 }

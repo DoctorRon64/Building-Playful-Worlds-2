@@ -65,7 +65,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8795323497819996804, guid: 6544afbfcff718145a014bccba8f9dc5, type: 3}
       propertyPath: m_Name
-      value: StartTile 1
+      value: StartTile
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6544afbfcff718145a014bccba8f9dc5, type: 3}

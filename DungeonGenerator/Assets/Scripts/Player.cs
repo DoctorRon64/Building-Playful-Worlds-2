@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 	public float MoveSpeed = 5f;
     public int StepsAmount;
 
+    public int Health = 20;
 	private TurnManager TurnManager;
     private DungeonGenerator DungeonGenerator;
     private InventoryManager Inventory;
@@ -60,20 +61,20 @@ public class Player : MonoBehaviour
                 //als ik naar links of rechts beweeg
                 if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
                 {
-                    GetItemWhenWalkedOn();
                     if (isFloorTile(MovePoint + new Vector2(Input.GetAxisRaw("Horizontal"), 0f)) == true) 
                     {
+
                         //zet movepoint positie
                         MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
                     }
+                    
                 }
 
                 else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
                 {
-                    GetItemWhenWalkedOn();
                     if (isFloorTile(MovePoint + new Vector2(0f, Input.GetAxisRaw("Vertical"))) == true)
 					{
                         MovePoint += new Vector2(0f, Input.GetAxisRaw("Vertical"));
@@ -81,6 +82,11 @@ public class Player : MonoBehaviour
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
                     }
+                }
+
+                else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 0f && Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 0f)
+                {
+                    GetItemWhenWalkedOn();
                 }
                 AnimatorController.SetBool("Moving", false);
             }
@@ -101,5 +107,15 @@ public class Player : MonoBehaviour
                 Inventory.PickupItem(dungeonData.ItemList[i]);
             }
         }
+    }
+
+    public void HealthDamage(int _Damage)
+    {
+        Health -= _Damage;
+    }
+
+    public void ApplyHealth(int _Health)
+    {
+        Health += _Health;
     }
 }

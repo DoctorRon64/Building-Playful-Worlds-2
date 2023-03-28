@@ -5,6 +5,6 @@ public class Sword : Item
     private void Awake()
     {
         IsWeapon = true;
-        WeaponDamage = Random.Range(1, 5);
+        AttackDamage = Random.Range(2, 7);
     }
 }

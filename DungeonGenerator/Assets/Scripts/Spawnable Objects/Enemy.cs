@@ -12,6 +12,10 @@ public class Enemy : MonoBehaviour
     private Player PlayerObj;
     private Vector2Int[] WhichSideToMove = new Vector2Int[5];
     public DungeonData DungeonData;
+
+    public int Health;
+    public int AttackDamage;
+
     public void Awake()
     {
         WhichSideToMove[0] = new Vector2Int(0, 1); //up
@@ -20,6 +24,9 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
         WhichSideToMove[4] = new Vector2Int(0, 0);
         
+        Health = Random.Range(4, 15);
+        AttackDamage = Random.Range(1, 7);
+
         MovePoint = transform.position;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         PlayerObj = FindObjectOfType<Player>();
@@ -128,6 +135,28 @@ public class Enemy : MonoBehaviour
             MovePoint = posTile;
         }
 	}
+
+    private void DoPlayerDamage()
+    {
+        for (int i = 0; i < WhichSideToMove.Length; i++)
+        {
+            if (WhichSideToMove[i] == new Vector2Int((int)PlayerObj.transform.position.x, (int)PlayerObj.transform.position.y))
+            {
+                PlayerObj.HealthDamage(AttackDamage);
+            }
+        }
+    }
+
+    public void TakeDamage(int _Damage)
+    {
+        Health -= _Damage;
+    }
+
+    public void ApplyHealth(int _Regeneration)
+    {
+        Health += _Regeneration;
+    }
+
 
     public int EnemyFindPlayerBehaviour()
 	{

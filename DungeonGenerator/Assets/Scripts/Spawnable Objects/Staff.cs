@@ -4,17 +4,16 @@ public class Staff : Item
 {
     private void Awake()
     {
-        IsMagic = true;
-
-        MagicDamage = Random.Range(1, 5);
-        MakeItemRareder(MagicDamage);
+        IsWeapon = true;
+        AttackDamage = Random.Range(5, 10);
+        MakeItemRareder(AttackDamage);
     }
 
     private void MakeItemRareder(int _MagicDamage)
     {
-        if (_MagicDamage >= 4)
+        if (_MagicDamage >= 8)
         {
-            MagicDamage = Random.Range(1, 5);
+            AttackDamage = Random.Range(5, 10);
         }
     }
 }
