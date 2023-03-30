@@ -10,7 +10,8 @@ public class Player : MonoBehaviour
     public int StepsAmount;
 
     public int Health = 20;
-	private TurnManager TurnManager;
+    public GameObject EnemieHitHud;
+    private TurnManager TurnManager;
     private DungeonGenerator DungeonGenerator;
     private InventoryManager Inventory;
     public DungeonData dungeonData;
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
 
         MovePoint = transform.position;
+        EnemieHitHud.SetActive(false);
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         TurnManager = FindObjectOfType<TurnManager>();
         Inventory = FindObjectOfType<InventoryManager>();
@@ -45,7 +47,7 @@ public class Player : MonoBehaviour
     private bool isFloorTile(Vector3 _vector3)
     {
         Vector2Int vector2 = new Vector2Int((int)_vector3.x, (int)_vector3.y);
-        return GetTileTypeWithKey(vector2) == TileType.Floor || GetTileTypeWithKey(vector2) == TileType.StartFloor;
+        return GetTileTypeWithKey(vector2) == TileType.Floor || GetTileTypeWithKey(vector2) == TileType.StartFloor || GetTileTypeWithKey(vector2) == TileType.BossFloor;
     }
 
     private void PlayerMovement()
@@ -109,7 +111,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void HealthDamage(int _Damage)
+    public void TakeDamage(int _Damage)
     {
         Health -= _Damage;
     }
@@ -118,4 +120,20 @@ public class Player : MonoBehaviour
     {
         Health += _Health;
     }
+
+    public void DoDamage(int _Damage)
+	{
+        for (int i = 0; i < dungeonData.EnemyList.Count; i++)
+		{
+            for (int j = 0; j < WhichSideToMove.Length; j++)
+            {
+                if (dungeonData.EnemyList[i].transform.position == transform.position + new Vector3(WhichSideToMove[j].x, WhichSideToMove[j].y, 0f))
+                {
+                    dungeonData.EnemyList[i].TakeDamage(_Damage);
+                }
+            }
+        }
+
+        
+	}
 }

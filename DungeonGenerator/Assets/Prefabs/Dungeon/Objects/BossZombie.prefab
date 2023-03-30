@@ -12,6 +12,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2193332823900589769, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2193332823900589769, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2193332823900589769, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -53,7 +61,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2327412251639442876, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_Name
-      value: Zombie
+      value: BossZombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: m_Color.b
+      value: 0.25297475
+      objectReference: {fileID: 0}
+    - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: m_Color.r
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6097a14505728c146b4661f7348221b0, type: 3}

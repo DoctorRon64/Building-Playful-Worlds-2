@@ -6,13 +6,12 @@ using Cinemachine;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public enum TileType { Floor , StartFloor, BossFloor, Wall, Door }
+    public enum TileType { Floor , StartFloor, BossFloor, Wall }
 
     public GameObject WallObject;
     public GameObject FloorObject;
     public GameObject StartFloorObject;
     public GameObject BossFloorObject;
-    public GameObject Door;
 
     public GameObject Player;
     public GameObject EndBoss;
@@ -48,8 +47,8 @@ public class DungeonGenerator : MonoBehaviour
     {
         ClearDungeon();
         MakeSilentRoom(Player, TileType.StartFloor);
-        AllLocateRooms();
         MakeSilentRoom(EndBoss, TileType.BossFloor);
+        AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
 
@@ -66,7 +65,6 @@ public class DungeonGenerator : MonoBehaviour
         SetCameraFollow.GetPlayerCam();
     }
 
-    [ContextMenu("Clear Dungeon")]
     public void ClearDungeon()
     {
         for (int i = EveryInstantiatedPrefab.Count - 1; i >= 0; i--)
@@ -74,11 +72,12 @@ public class DungeonGenerator : MonoBehaviour
             DestroyImmediate(EveryInstantiatedPrefab[i]);
         }
 
+        EveryInstantiatedPrefab.Clear();
+        EveryInstantiatedPrefab.Clear();
         Dungeon.Clear();
         RoomList.Clear();
         DungeonData.EnemyList.Clear();
         DungeonData.ItemList.Clear();
-        EveryInstantiatedPrefab.Clear();
     }
 
     private void ConnectRooms()
@@ -87,7 +86,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             Room room = RoomList[i];
             Room otherRoom = RoomList[(i + Random.Range(1, RoomList.Count)) % RoomList.Count];
-            ConnectKamers(room, otherRoom);
+            ConnectRooms(room, otherRoom);
         }
     }
 
@@ -99,14 +98,32 @@ public class DungeonGenerator : MonoBehaviour
         int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
         Room Room = new Room(minX, maxX, minY, maxY);
-        PlaceRoomInsideDungeon(Room, _tiletip, false);
 
-        for (int j = 0; j < RoomList.Count; j++)
-        {
-            posRandomInRoom = new Vector3(RoomList[j].GetRandomPositionInRoom().x, RoomList[j].GetRandomPositionInRoom().y, 0);
-            GameObject instanceObj = Instantiate(_Object, posRandomInRoom, Quaternion.identity);
-            instanceObj.transform.parent = gameObject.transform;
-            EveryInstantiatedPrefab.Add(instanceObj);
+        if (RoomList != null)
+		{
+            while (CanRoomFitInsideDungeon(Room))
+            {
+                PlaceRoomInsideDungeon(Room, _tiletip, false);
+            }
+        } 
+        else
+		{
+            PlaceRoomInsideDungeon(Room, _tiletip, false);
+        }
+
+        foreach(Room _room in RoomList)
+		{
+            if (_room == Room)
+			{
+                posRandomInRoom = new Vector3(_room.GetRandomPositionInRoom().x, _room.GetRandomPositionInRoom().y, 0);
+                GameObject instanceObj = Instantiate(_Object, posRandomInRoom, Quaternion.identity);
+                instanceObj.transform.parent = gameObject.transform;
+                EveryInstantiatedPrefab.Add(instanceObj);
+                if (_Object.GetComponent<Player>() != null)
+                {
+                    DungeonData.Player = instanceObj.GetComponent<Player>();
+                }
+            }
         }
     }
 
@@ -119,11 +136,11 @@ public class DungeonGenerator : MonoBehaviour
             int minY = Random.Range(0, GridHeight);
             int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
-            Room kamer = new Room(minX, maxX, minY, maxY);
+            Room Room = new Room(minX, maxX, minY, maxY);
 
-            if (CanRoomFitInsideDungeon(kamer))
+            if (CanRoomFitInsideDungeon(Room))
             {
-                PlaceRoomInsideDungeon(kamer, TileType.Floor, true);
+                PlaceRoomInsideDungeon(Room, TileType.Floor, true);
             } 
             else
             {
@@ -186,6 +203,7 @@ public class DungeonGenerator : MonoBehaviour
                 if (!samePos)
                 {
                     GameObject instanceObj = Instantiate(_obj, posRandomInRoom, Quaternion.identity, gameObject.transform);
+                    instanceObj.name = _obj.name;
                     _list.Add(instanceObj.GetComponent<Item>());
                     EveryInstantiatedPrefab.Add(instanceObj);
                 }
@@ -221,7 +239,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void ConnectKamers(Room _Room1, Room _Room2)
+    private void ConnectRooms(Room _Room1, Room _Room2)
     {
         Vector2Int posOne = _Room1.GetCenter();
         Vector2Int posTwo = _Room2.GetCenter();
@@ -244,7 +262,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    public void PlaceRoomInsideDungeon(Room _Room, TileType _tile, bool _CanObjectSpawnInRoom)
+    public void PlaceRoomInsideDungeon(Room _Room, TileType _tile, bool _CanEnemiesSpawnInRoom)
     {
         for (int x = _Room.minX; x <= _Room.maxX; x++)
         {
@@ -253,7 +271,7 @@ public class DungeonGenerator : MonoBehaviour
                 Dungeon.Add(new Vector2Int(x, y), _tile);
             }
         }
-        if (_CanObjectSpawnInRoom) { EnemiesCanSpawnRoomList.Add(_Room); }
+        if (_CanEnemiesSpawnInRoom) { EnemiesCanSpawnRoomList.Add(_Room); }
         RoomList.Add(_Room);
     }
 
@@ -289,5 +307,14 @@ public class DungeonGenerator : MonoBehaviour
         {
             return new Vector2Int(Random.Range(minX, maxX + 1), Random.Range(minY, maxY + 1));
         }
+
+        public bool ContainsInRoom(int _X, int _Y)
+		{
+            if (_X > minX && _X < maxX && _Y > minY && _Y < maxY)
+			{
+                return true;
+			}
+            return false;
+		}
     }
 }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Staff : Item
 {
-    private void Awake()
+    public override void OtherAwake()
     {
         IsWeapon = true;
         AttackDamage = Random.Range(5, 10);
@@ -15,5 +15,10 @@ public class Staff : Item
         {
             AttackDamage = Random.Range(5, 10);
         }
+    }
+
+    public override void Use()
+    {
+        player.DoDamage(AttackDamage);
     }
 }

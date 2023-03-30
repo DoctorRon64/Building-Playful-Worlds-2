@@ -2,9 +2,14 @@
 
 public class HealthPotion : Item
 {
-    private void Awake()
+    public override void OtherAwake()
     {
         IsConsumable = true;
         ConsumeAmount = Random.Range(3, 7);
+    }
+
+    public override void Use()
+    {
+        player.ApplyHealth(ConsumeAmount);
     }
 }

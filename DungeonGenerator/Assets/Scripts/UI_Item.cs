@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static UnityEditor.Progress;
 
-public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler
+public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Image uiImage { get; private set; }
     public Item itemReference { get; private set; }
@@ -13,11 +13,13 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
     private InventoryManager Inventory;
     [SerializeField] private DungeonData dungeonData;
     [SerializeField] private LayerMask OnlyFloors;
-    private Player player;
+    private GameObject EnemieHitHud;
+    
+    public GameObject HoverText;
+    public Text[] HoverTextUI = new Text[3];
 
     private void Awake()
     {
-        player = FindObjectOfType<Player>();
         Inventory = GetComponent<InventoryManager>();
         uiImage = GetComponent<Image>();
     }
@@ -27,14 +29,25 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
         itemReference = item;
         itemReference.gameObject.SetActive(false);
         dungeonData.ItemList.Remove(item);
-        itemReference.OnUseEvent += OnUseItem;
         uiImage.sprite = item.icon;
+
+        HoverText.SetActive(false);
+        EnemieHitHud = dungeonData.Player.EnemieHitHud;
+        EnemieHitHud.SetActive(false);
+
+        for (int i = 0; i < HoverTextUI.Length; i++)
+        {
+            HoverTextUI[0].text = itemReference.name;
+            HoverTextUI[1].text = itemReference.ConsumeAmount.ToString();
+            HoverTextUI[2].text = itemReference.AttackDamage.ToString();
+        }
     }
 
     public void DropItem(Vector3 _dropPosition)
     {
         itemReference.gameObject.SetActive(true);
         itemReference.gameObject.transform.position = _dropPosition;
+        EnemieHitHud?.SetActive(false);
         dungeonData.ItemList.Add(itemReference);
         currentSlot.ReleaseItem();
         currentSlot = null;
@@ -45,23 +58,41 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
         currentSlot = slot;
     }
 
-    private void OnUseItem(Item usedItem)
-    {
-        if (usedItem.IsConsumable)
-        {
-            currentSlot.ReleaseItem();
-            Destroy(gameObject);
-        }
-    }
-
     public void Use()
     {
         itemReference.Use();
+        currentSlot.ReleaseItem();
+        currentSlot = null;
+        Destroy(gameObject);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        HoverText?.SetActive(true);
+        if (itemReference.IsWeapon)
+		{
+            EnemieHitHud?.SetActive(true);
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        HoverText?.SetActive(false);
+        EnemieHitHud?.SetActive(false);
     }
 
     public void OnDrag(PointerEventData eventData)
     {
         transform.position = Input.mousePosition;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+	{
+        if (Input.GetMouseButtonDown(1))
+		{
+            Use();
+            EnemieHitHud?.SetActive(false);
+        }
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -95,28 +126,9 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
             Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -1f);
             Ray r = Camera.main.ScreenPointToRay(pos);
             RaycastHit2D hit = Physics2D.Raycast(r.origin, r.direction, Mathf.Infinity, OnlyFloors);
-            if (hit == true)
+            if (hit == true && detectItemOnItemDrop(hit.transform.position, dungeonData.ItemList) == false && detectItemOnItemDrop(hit.transform.position, dungeonData.EnemyList) == false) 
             {
-                if (detectItemOnItemDrop(hit.transform.position, dungeonData.ItemList) == true)
-                {
-                    
-                }
-                else if (detectEnemyOnItemDrop(hit.transform.position, dungeonData.EnemyList) == true && itemReference.IsWeapon == true)
-                {
-                    AttackEnemy(hit.transform.position);
-                }
-                else if (detectEnemyOnItemDrop(hit.transform.position, dungeonData.EnemyList) == true && itemReference.IsConsumable == true)
-                {
-                    LoveEnemy(hit.transform.position);
-                }
-                else if (detectPlayerOnItemDrop(hit.transform.position) == true && itemReference.IsConsumable == true)
-                {
-                    LovePlayer(hit.transform.position);
-                } 
-                else
-                {
-                    DropItem(hit.transform.position);
-                }
+                DropItem(hit.transform.position);
                 Destroy(gameObject);
             }
             else
@@ -139,7 +151,7 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
         return false;
     }
 
-    private bool detectEnemyOnItemDrop(Vector3 _dropPosition, List<Enemy> _list)
+    private bool detectItemOnItemDrop(Vector3 _dropPosition, List<Enemy> _list)
     {
         for (int i = 0; i < _list.Count; i++)
         {
@@ -149,55 +161,5 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
             }
         }
         return false;
-    }
-
-    private bool detectPlayerOnItemDrop(Vector3 _dropPosition)
-    {
-        if (player.transform.position == _dropPosition)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    private void AttackEnemy(Vector3 _dropPosition)
-    {
-        for (int i = 0; i < dungeonData.EnemyList.Count; i++)
-        {
-            if (dungeonData.EnemyList[i].transform.position == _dropPosition && itemReference.IsWeapon == true)
-            {
-                Debug.Log("attack");
-                dungeonData.EnemyList[i].GetComponent<Enemy>().TakeDamage(itemReference.AttackDamage);
-                Destroy(itemReference);
-                currentSlot.ReleaseItem();
-                currentSlot = null;
-            }
-        }
-    }
-
-    private void LoveEnemy(Vector3 _dropPosition)
-    {
-        for (int i = 0; i < dungeonData.EnemyList.Count; i++)
-        {
-            if (dungeonData.EnemyList[i].transform.position == _dropPosition && itemReference.IsConsumable == true)
-            {
-                Debug.Log("love is in the air");
-                dungeonData.EnemyList[i].GetComponent<Enemy>().ApplyHealth(itemReference.ConsumeAmount);
-                Destroy(itemReference);
-                currentSlot.ReleaseItem();
-                currentSlot = null;
-            }
-        }
-    }
-
-    private void LovePlayer(Vector3 _dropPosition)
-    {
-        if (player.transform.position == _dropPosition && itemReference.IsConsumable == true)
-        {
-            player.ApplyHealth(itemReference.ConsumeAmount);
-            Destroy(itemReference);
-            currentSlot.ReleaseItem();
-            currentSlot = null;
-        }
     }
 }

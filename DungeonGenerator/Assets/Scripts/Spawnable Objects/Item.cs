@@ -8,16 +8,26 @@ public class Item : MonoBehaviour
     public bool IsConsumable;
     public bool IsWeapon;
 
-    public int AttackDamage;
-    public int ConsumeAmount;
+    public int AttackDamage = 0;
+    public int ConsumeAmount = 0;
 
     public Sprite icon;
-    public event System.Action<Item> OnUseEvent;
-
     public DungeonData dungeonData;
+    public Player player;
 
-    public virtual void Use()
+    public void Awake()
+	{
+		player = FindObjectOfType<Player>();
+        OtherAwake();
+    }
+
+    public virtual void OtherAwake()
+	{
+
+	}
+
+	public virtual void Use()
     {
-        OnUseEvent?.Invoke(this);
+        
     }
 }

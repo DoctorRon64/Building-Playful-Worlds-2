@@ -55,6 +55,7 @@ public class TurnManager : MonoBehaviour
         for (int i = 0; i < DungeonData.EnemyList.Count; i++)
         {
             DungeonData.EnemyList[i].GetComponent<Enemy>().PatrolBehaviour();
+            DungeonData.EnemyList[i].GetComponent<Enemy>().CheckIfEnemyDies();
         }
     }
 

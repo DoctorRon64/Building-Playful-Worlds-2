@@ -2,9 +2,14 @@
 
 public class Sword : Item
 {
-    private void Awake()
-    {
+    public override void OtherAwake()
+	{
         IsWeapon = true;
         AttackDamage = Random.Range(2, 7);
+    }
+
+    public override void Use()
+    {
+        player.DoDamage(AttackDamage);
     }
 }

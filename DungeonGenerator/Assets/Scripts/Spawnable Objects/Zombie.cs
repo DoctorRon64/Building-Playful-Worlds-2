@@ -1,4 +1,5 @@
-﻿public class Zombie : Enemy
+﻿using UnityEngine;
+public class Zombie : Enemy
 {
 
 }

@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
     public float MoveSpeed;
     private Player PlayerObj;
     private Vector2Int[] WhichSideToMove = new Vector2Int[5];
-    public DungeonData DungeonData;
+    public DungeonData DungeonDatas;
 
     public int Health;
     public int AttackDamage;
@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
         WhichSideToMove[4] = new Vector2Int(0, 0);
         
-        Health = Random.Range(4, 15);
+        Health = Random.Range(4, 8);
         AttackDamage = Random.Range(1, 7);
 
         MovePoint = transform.position;
@@ -97,8 +97,8 @@ public class Enemy : MonoBehaviour
             int newDir = EnemyFindPlayerBehaviour();
            
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || 
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
             {
                 newDir = Random.Range(0, WhichSideToMove.Length - 1);
                 
@@ -118,8 +118,8 @@ public class Enemy : MonoBehaviour
             int newDir = Random.Range(0, WhichSideToMove.Length - 1);
 
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.ItemList) == true || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonData.EnemyList) == true)
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || 
+                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
             {
                 newDir = Random.Range(0, WhichSideToMove.Length - 1);
 
@@ -142,7 +142,7 @@ public class Enemy : MonoBehaviour
         {
             if (WhichSideToMove[i] == new Vector2Int((int)PlayerObj.transform.position.x, (int)PlayerObj.transform.position.y))
             {
-                PlayerObj.HealthDamage(AttackDamage);
+                PlayerObj.TakeDamage(AttackDamage);
             }
         }
     }
@@ -157,6 +157,21 @@ public class Enemy : MonoBehaviour
         Health += _Regeneration;
     }
 
+    public void CheckIfEnemyDies()
+	{
+        if (Health <= 0)
+		{
+            foreach (Enemy enemy in DungeonDatas.EnemyList)
+			{
+                if (enemy == this)
+				{
+                    DungeonDatas.EnemyList.Remove(enemy);
+                    gameObject.SetActive(false);
+                }
+            }
+
+		}
+	}
 
     public int EnemyFindPlayerBehaviour()
 	{
