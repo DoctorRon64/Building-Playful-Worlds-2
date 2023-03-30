@@ -6,13 +6,16 @@ using Cinemachine;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public enum TileType { Floor , StartFloor, Wall }
+    public enum TileType { Floor , StartFloor, BossFloor, Wall, Door }
 
     public GameObject WallObject;
     public GameObject FloorObject;
     public GameObject StartFloorObject;
+    public GameObject BossFloorObject;
+    public GameObject Door;
 
     public GameObject Player;
+    public GameObject EndBoss;
     public List<GameObject> Enemies = new List<GameObject>();
     public List<GameObject> Items = new List<GameObject>();
 
@@ -44,8 +47,9 @@ public class DungeonGenerator : MonoBehaviour
     public void Generate()
     {
         ClearDungeon();
-        MakeStartRoom();
+        MakeSilentRoom(Player, TileType.StartFloor);
         AllLocateRooms();
+        MakeSilentRoom(EndBoss, TileType.BossFloor);
         ConnectRooms();
         AllLocateWalls();
 
@@ -87,7 +91,7 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void MakeStartRoom()
+    private void MakeSilentRoom(GameObject _Object, TileType _tiletip)
     {
         int minX = Random.Range(0, GridWidth);
         int maxX = minX + Random.Range(minRoomSize, MaxRoomSize + 1);
@@ -95,17 +99,15 @@ public class DungeonGenerator : MonoBehaviour
         int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
         Room Room = new Room(minX, maxX, minY, maxY);
-        PlaceRoomInsideDungeon(Room, TileType.StartFloor, false);
+        PlaceRoomInsideDungeon(Room, _tiletip, false);
 
         for (int j = 0; j < RoomList.Count; j++)
         {
             posRandomInRoom = new Vector3(RoomList[j].GetRandomPositionInRoom().x, RoomList[j].GetRandomPositionInRoom().y, 0);
-            GameObject instanceObj = Instantiate(Player, posRandomInRoom, Quaternion.identity);
+            GameObject instanceObj = Instantiate(_Object, posRandomInRoom, Quaternion.identity);
             instanceObj.transform.parent = gameObject.transform;
             EveryInstantiatedPrefab.Add(instanceObj);
         }
-
-        //RoomList.RemoveAt(0);
     }
 
     private void AllLocateRooms()
@@ -156,6 +158,7 @@ public class DungeonGenerator : MonoBehaviour
             {
                 case TileType.Floor: obj = Instantiate(FloorObject, posTile, Quaternion.identity, transform); break;
                 case TileType.StartFloor: obj = Instantiate(StartFloorObject, posTile, Quaternion.identity, transform); break;
+                case TileType.BossFloor: obj = Instantiate(BossFloorObject, posTile, Quaternion.identity, transform); break;
                 case TileType.Wall: obj = Instantiate(WallObject, posTile, Quaternion.identity, transform); break;
             }
             EveryInstantiatedPrefab.Add(obj);
@@ -224,6 +227,7 @@ public class DungeonGenerator : MonoBehaviour
         Vector2Int posTwo = _Room2.GetCenter();
         int dirX = posTwo.x > posOne.x ? 1 : -1;
         int kamer1x = 0;
+
         for (kamer1x = posOne.x; kamer1x != posTwo.x; kamer1x += dirX)
         {
             Vector2Int position = new Vector2Int(kamer1x, posOne.y);

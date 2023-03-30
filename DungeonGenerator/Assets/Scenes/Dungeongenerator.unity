@@ -375,7 +375,10 @@ MonoBehaviour:
   WallObject: {fileID: 2608334391189121977, guid: 9e28eb117066c9346a465240a41cb4db, type: 3}
   FloorObject: {fileID: 8795323497819996804, guid: 6544afbfcff718145a014bccba8f9dc5, type: 3}
   StartFloorObject: {fileID: 4703655776935685402, guid: 5bd291de9d1d3574db98d9fa4f815555, type: 3}
+  BossFloorObject: {fileID: 2156931638172985806, guid: 324a616c5829b404aa72b866a573b015, type: 3}
+  Door: {fileID: 8253089389639338982, guid: 736014962cea2ef4a8f5ade452227ffe, type: 3}
   Player: {fileID: 2383609870657609980, guid: 234c2aacb0d507249a4805a7395de699, type: 3}
+  EndBoss: {fileID: 6076916698155020148, guid: bac86e215b602f845b7874f07079b0d2, type: 3}
   Enemies:
   - {fileID: 6942803884587900982, guid: 2d36e983e9cb0d94081b3c4eade8d8b4, type: 3}
   - {fileID: 2327412251639442876, guid: 6097a14505728c146b4661f7348221b0, type: 3}
