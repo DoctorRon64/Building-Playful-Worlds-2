@@ -8,10 +8,10 @@ public class SetCamera : MonoBehaviour
     public CinemachineVirtualCamera VirtualCamera;
     public Transform Player;
 
-    public void Awake()
+    public void Update()
     {
         VirtualCamera = GetComponent<CinemachineVirtualCamera>();
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 10; i++)
         {
             GetPlayerCam();
         }
