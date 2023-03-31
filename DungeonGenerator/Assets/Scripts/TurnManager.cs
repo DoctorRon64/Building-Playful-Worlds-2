@@ -30,9 +30,9 @@ public class TurnManager : MonoBehaviour
 	private void Update()
 	{
         PlayerHealthSlider.value = player.Health;
-	}
+    }
 
-	public void PlayerTurn() 
+    public void PlayerTurn() 
     {
         PlayerImage.enabled = true;
         player.StepsAmount = AmountOfPlayerSteps;

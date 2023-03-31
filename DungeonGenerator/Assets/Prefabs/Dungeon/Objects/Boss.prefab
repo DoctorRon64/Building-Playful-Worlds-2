@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2327412251639442876
+--- !u!1 &524905221559486497
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,38 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2193332823900589769}
-  - component: {fileID: 7077680441297554096}
-  - component: {fileID: 7943320432580110656}
+  - component: {fileID: 3164701825723247077}
+  - component: {fileID: -3334107685367684887}
+  - component: {fileID: 562846441170295261}
   m_Layer: 0
-  m_Name: Zombie
+  m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2193332823900589769
+--- !u!4 &3164701825723247077
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2327412251639442876}
+  m_GameObject: {fileID: 524905221559486497}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &7077680441297554096
+--- !u!212 &-3334107685367684887
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2327412251639442876}
+  m_GameObject: {fileID: 524905221559486497}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -74,7 +74,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: cd20fb5ed34a6624aad015b66ab1e3e8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: eb4d7ed4f186f0844a6b1b5a0270aaad, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -85,20 +85,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7943320432580110656
+--- !u!114 &562846441170295261
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2327412251639442876}
+  m_GameObject: {fileID: 524905221559486497}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8d75e5af3a9fea41a0c097185fa34a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MovePoint: {x: 0, y: 0}
-  MoveSpeed: 5
+  MoveSpeed: 10
   DungeonDatas: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
-  Health: 0
-  AttackDamage: 0
+  Health: 100
+  AttackDamage: 1

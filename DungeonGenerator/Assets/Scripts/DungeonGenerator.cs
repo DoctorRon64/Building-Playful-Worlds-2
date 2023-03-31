@@ -40,9 +40,8 @@ public class DungeonGenerator : MonoBehaviour
     public DungeonData DungeonData;
     public SetCamera SetCameraFollow;
 
-    private void Awake()
+    public void Awake()
     {
-        SetCameraFollow.GetPlayerCam();
         Generate();
     }
 
@@ -66,6 +65,7 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         GenerateDungeon();
+        SetCameraFollow.GetPlayerCam();
     }
 
     [ContextMenu("Clear")]

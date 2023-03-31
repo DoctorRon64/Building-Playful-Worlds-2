@@ -164,14 +164,14 @@ public class Enemy : MonoBehaviour
 			{
                 if (DungeonDatas.EnemyList[i] == gameObject.GetComponent<Enemy>())
 				{
-                    if (gameObject.GetComponent<EndBoss>() != null)
-					{
-                        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-                    }
                     DungeonDatas.EnemyList.Remove(this);
                     gameObject.SetActive(false);
                 }
-			}
+                else if (gameObject.GetComponent<EndBoss>() != null)
+                {
+                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                }
+            }
 		}
 	}
 

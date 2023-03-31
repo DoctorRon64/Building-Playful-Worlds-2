@@ -104,6 +104,7 @@ public class Player : MonoBehaviour
 
                 else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 0f && Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 0f)
                 {
+                    CheckIfEnemyDies();
                     GetItemWhenWalkedOn();
                 }
                 AnimatorController.SetBool("Moving", false);
@@ -166,7 +167,7 @@ public class Player : MonoBehaviour
     {
         if (Health <= 0)
         {
-            SceneManager.LoadScene("lose");
+            SceneManager.LoadScene("lose", LoadSceneMode.Additive);
         }
     }
 }
