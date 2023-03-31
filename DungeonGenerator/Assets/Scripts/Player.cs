@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static DungeonGenerator;
 
 public class Player : MonoBehaviour
@@ -65,12 +66,19 @@ public class Player : MonoBehaviour
                 {
                     if (isFloorTile(MovePoint + new Vector2(Input.GetAxisRaw("Horizontal"), 0f)) == true) 
                     {
-
                         //zet movepoint positie
                         MovePoint += new Vector2(Input.GetAxisRaw("Horizontal"), 0f);
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
+                    }
+
+                    for (int i = 0; i < dungeonData.EnemyList.Count; i++)
+					{
+                        if (dungeonData.EnemyList[i].transform.position == (Vector3)MovePoint)
+						{
+                            CheckIfPlayerSteppedOnEnemy();
+                        }
                     }
                     
                 }
@@ -83,6 +91,14 @@ public class Player : MonoBehaviour
 
                         StepsAmount--;
                         TurnManager.GetIfPlayerWalked();
+                    }
+
+                    for (int i = 0; i < dungeonData.EnemyList.Count; i++)
+                    {
+                        if (dungeonData.EnemyList[i].transform.position == (Vector3)MovePoint)
+                        {
+                            CheckIfPlayerSteppedOnEnemy();
+                        }
                     }
                 }
 
@@ -111,6 +127,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    public void CheckIfPlayerSteppedOnEnemy()
+	{
+        for (int i = 0; i < dungeonData.EnemyList.Count; i++)
+		{
+            if (gameObject.transform.position == dungeonData.EnemyList[i].transform.position || (Vector3)MovePoint == dungeonData.EnemyList[i].transform.position)
+			{
+                TakeDamage(dungeonData.EnemyList[i].AttackDamage);
+			}
+		}
+	}
+
     public void TakeDamage(int _Damage)
     {
         Health -= _Damage;
@@ -133,7 +160,13 @@ public class Player : MonoBehaviour
                 }
             }
         }
-
-        
 	}
+
+    public void CheckIfEnemyDies()
+    {
+        if (Health <= 0)
+        {
+            SceneManager.LoadScene("lose");
+        }
+    }
 }

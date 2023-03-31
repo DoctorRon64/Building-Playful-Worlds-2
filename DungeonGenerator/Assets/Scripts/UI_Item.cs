@@ -32,7 +32,7 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
         uiImage.sprite = item.icon;
 
         HoverText.SetActive(false);
-        EnemieHitHud = dungeonData.Player.EnemieHitHud;
+        EnemieHitHud = FindAnyObjectByType<Player>().EnemieHitHud;
         EnemieHitHud.SetActive(false);
 
         for (int i = 0; i < HoverTextUI.Length; i++)
@@ -63,6 +63,7 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
         itemReference.Use();
         currentSlot.ReleaseItem();
         currentSlot = null;
+        itemReference = null;
         Destroy(gameObject);
     }
 
@@ -91,7 +92,7 @@ public class UI_Item : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragH
         if (Input.GetMouseButtonDown(1))
 		{
             Use();
-            EnemieHitHud?.SetActive(false);
+            EnemieHitHud.SetActive(false);
         }
     }
 

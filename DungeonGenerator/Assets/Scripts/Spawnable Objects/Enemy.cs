@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static DungeonGenerator;
 using UnityEngine.Timeline;
 
 public class Enemy : MonoBehaviour
 {
-    private DungeonGenerator DungeonGenerator;
     public Vector2 MovePoint;
     public float MoveSpeed;
-    private Player PlayerObj;
+
     private Vector2Int[] WhichSideToMove = new Vector2Int[5];
+
+    private Player PlayerObj;
     public DungeonData DungeonDatas;
+    private DungeonGenerator DungeonGenerator;
 
     public int Health;
     public int AttackDamage;
@@ -24,12 +27,13 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[3] = new Vector2Int(-1, 0); //left
         WhichSideToMove[4] = new Vector2Int(0, 0);
         
-        Health = Random.Range(4, 8);
-        AttackDamage = Random.Range(1, 7);
+        Health = Random.Range(4, 10);
+        AttackDamage = Random.Range(1, 3);
 
         MovePoint = transform.position;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         PlayerObj = FindObjectOfType<Player>();
+
     }
 
     protected void Update()
@@ -67,26 +71,25 @@ public class Enemy : MonoBehaviour
         }
         return false;
     }
+	protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
+	{
+		Vector2Int vector2Int = new Vector2Int((int)MovePoint.x + _xpos, (int)MovePoint.y + _ypos);
+		return vector2Int;
+	}
 
-    protected Vector2Int GetTileTypeAround(int _xpos, int _ypos)
-    {
-        Vector2Int vector2Int = new Vector2Int((int)MovePoint.x + _xpos, (int)MovePoint.y + _ypos);
-        return vector2Int;
-    }
-
-    protected Vector2Int GetTileTypeAround(Vector2Int direction)
+	protected Vector2Int GetTileTypeAround(Vector2Int direction)
     {
         Vector2Int vector2Int = new Vector2Int((int)MovePoint.x + direction.x, (int)MovePoint.y + direction.y);
         return vector2Int;
     }
     protected bool isFloorTile(Vector2Int _vector2)
     {
-        return GetTileTypeWithKey(_vector2) == TileType.Floor || GetTileTypeWithKey(_vector2) == TileType.StartFloor;
+       return GetTileTypeWithKey(_vector2) is TileType.Floor or TileType.StartFloor or TileType.BossFloor;
     }
 
     protected bool IsPlayerInHood()
 	{
-        return Vector2.Distance(transform.position, PlayerObj.transform.position) < 20f;
+        return Vector2.Distance(transform.position, PlayerObj.transform.position) < 15f;
     }
 
     public void PatrolBehaviour()
@@ -95,13 +98,11 @@ public class Enemy : MonoBehaviour
         if (IsPlayerInHood())
 		{
             int newDir = EnemyFindPlayerBehaviour();
-           
-            while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
+
+            while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
             {
                 newDir = Random.Range(0, WhichSideToMove.Length - 1);
-                
+
                 check++;
                 if (check >= 4)
                 {
@@ -109,7 +110,7 @@ public class Enemy : MonoBehaviour
                     break;
                 }
             }
-            
+
             Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
             MovePoint = posTile;
         }
@@ -117,30 +118,32 @@ public class Enemy : MonoBehaviour
 		{
             int newDir = Random.Range(0, WhichSideToMove.Length - 1);
 
-            while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || 
-                GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
+            for (int i = 0; i < WhichSideToMove.Length; i++)
             {
-                newDir = Random.Range(0, WhichSideToMove.Length - 1);
+               while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
+               {
+                    newDir = Random.Range(0, WhichSideToMove.Length - 1);
 
-                check++;
-                if (check >= 4)
-                {
-                    newDir = 4;
-                    break;
-                }
+                    check++;
+                    if (check >= 4)
+                    {
+                        newDir = 4;
+                        break;
+                    }
+               }
             }
+
 
             Vector3 posTile = new Vector3(GetTileTypeAround(WhichSideToMove[newDir]).x, GetTileTypeAround(WhichSideToMove[newDir]).y, 0f);
             MovePoint = posTile;
         }
 	}
 
-    private void DoPlayerDamage()
+    public void CheckIfCanHurtPlayer()
     {
         for (int i = 0; i < WhichSideToMove.Length; i++)
         {
-            if (WhichSideToMove[i] == new Vector2Int((int)PlayerObj.transform.position.x, (int)PlayerObj.transform.position.y))
+            if ((Vector3)MovePoint == PlayerObj.transform.position || this.transform.position == PlayerObj.transform.position)
             {
                 PlayerObj.TakeDamage(AttackDamage);
             }
@@ -150,26 +153,25 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int _Damage)
     {
         Health -= _Damage;
-    }
-
-    public void ApplyHealth(int _Regeneration)
-    {
-        Health += _Regeneration;
+        CheckIfEnemyDies();
     }
 
     public void CheckIfEnemyDies()
 	{
         if (Health <= 0)
 		{
-            foreach (Enemy enemy in DungeonDatas.EnemyList)
+            for (int i = 0; i < DungeonDatas.EnemyList.Count; i++)
 			{
-                if (enemy == this)
+                if (DungeonDatas.EnemyList[i] == gameObject.GetComponent<Enemy>())
 				{
-                    DungeonDatas.EnemyList.Remove(enemy);
+                    if (gameObject.GetComponent<EndBoss>() != null)
+					{
+                        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+                    }
+                    DungeonDatas.EnemyList.Remove(this);
                     gameObject.SetActive(false);
                 }
-            }
-
+			}
 		}
 	}
 

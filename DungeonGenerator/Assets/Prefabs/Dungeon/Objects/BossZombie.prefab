@@ -13,11 +13,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2193332823900589769, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2193332823900589769, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 2193332823900589769, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -64,8 +64,12 @@ PrefabInstance:
       value: BossZombie
       objectReference: {fileID: 0}
     - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: eb4d7ed4f186f0844a6b1b5a0270aaad, type: 3}
+    - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_Color.b
-      value: 0.25297475
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_Color.g
@@ -73,7 +77,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7077680441297554096, guid: 6097a14505728c146b4661f7348221b0, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7943320432580110656, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: Health
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7943320432580110656, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: MoveSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7943320432580110656, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: AttackDamage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7943320432580110656, guid: 6097a14505728c146b4661f7348221b0, type: 3}
+      propertyPath: DungeonDatas
+      value: 
+      objectReference: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6097a14505728c146b4661f7348221b0, type: 3}

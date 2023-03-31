@@ -12,19 +12,29 @@ public class TurnManager : MonoBehaviour
     public int AmountOfPlayerSteps;
     public int AmountOfOpponentSteps;
 
+    [SerializeField] private Image PlayerImage;
+    [SerializeField] private Image EnemyImage;
+    [SerializeField] private Slider PlayerHealthSlider;
+
     public float OpponentTimeTurn;
-	public Button EndTurnButton;
     public DungeonData DungeonData;
     private Player player;
 
     public void Start()
     {
+        PlayerImage.enabled = true;
         player = FindObjectOfType<Player>();
         EndOpponentTurn();
     }
 
-    public void PlayerTurn() 
+	private void Update()
+	{
+        PlayerHealthSlider.value = player.Health;
+	}
+
+	public void PlayerTurn() 
     {
+        PlayerImage.enabled = true;
         player.StepsAmount = AmountOfPlayerSteps;
     }
 
@@ -39,6 +49,7 @@ public class TurnManager : MonoBehaviour
     [ContextMenu("Walk Enemies")]
     public IEnumerator EnemyTurn()
 	{
+        EnemyImage.enabled = true;
         for (int i = 0; i < AmountOfOpponentSteps; i++)
         {
             MoveEnemy();
@@ -55,23 +66,28 @@ public class TurnManager : MonoBehaviour
         for (int i = 0; i < DungeonData.EnemyList.Count; i++)
         {
             DungeonData.EnemyList[i].GetComponent<Enemy>().PatrolBehaviour();
-            DungeonData.EnemyList[i].GetComponent<Enemy>().CheckIfEnemyDies();
         }
     }
 
     public void EndPlayerTurn()
     {
-        EndTurnButton.interactable = false;
         IsPlayerTurn = false;
         IsOpponentTurn = true;
+        PlayerImage.enabled = false;
         StartCoroutine(EnemyTurn());
     }
 
     public void EndOpponentTurn()
     {
-        EndTurnButton.interactable = true;
         IsOpponentTurn = false;
         IsPlayerTurn = true;
+        EnemyImage.enabled = false;
+
+        for (int i = 0; i < DungeonData.EnemyList.Count; i++)
+		{
+            DungeonData.EnemyList[i].CheckIfCanHurtPlayer();
+		}
+
         PlayerTurn();
     }
 }

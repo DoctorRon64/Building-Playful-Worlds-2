@@ -6,7 +6,7 @@ using Cinemachine;
 
 public class DungeonGenerator : MonoBehaviour
 {
-    public enum TileType { Floor , StartFloor, BossFloor, Wall }
+    public enum TileType { Floor , StartFloor, Wall, BossFloor }
 
     public GameObject WallObject;
     public GameObject FloorObject;
@@ -26,6 +26,8 @@ public class DungeonGenerator : MonoBehaviour
 
     public int MaxObjectInRoom = 3;
     public int MinObjectInRoom = 0;
+    public int MaxEnemiesInRoom;
+    public int MinEnemiesInRoom;
 
     private Vector3 posRandomInRoom;
     public int numRoom = 10;
@@ -37,8 +39,10 @@ public class DungeonGenerator : MonoBehaviour
 
     public DungeonData DungeonData;
     public SetCamera SetCameraFollow;
+
     private void Awake()
     {
+        SetCameraFollow.GetPlayerCam();
         Generate();
     }
 
@@ -54,7 +58,7 @@ public class DungeonGenerator : MonoBehaviour
 
         for (int i = 0; i < Enemies.Count; i++)
 		{
-            SpwanRandomObjectInRoom(Enemies[i], DungeonData.EnemyList);
+            SpwanRandomEnemiesInRoom(Enemies[i], DungeonData.EnemyList);
 		}
         for (int i = 0; i < Items.Count; i++)
         {
@@ -62,15 +66,19 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         GenerateDungeon();
-        SetCameraFollow.GetPlayerCam();
     }
 
+    [ContextMenu("Clear")]
     public void ClearDungeon()
     {
         for (int i = EveryInstantiatedPrefab.Count - 1; i >= 0; i--)
         {
             DestroyImmediate(EveryInstantiatedPrefab[i]);
         }
+        for (int i = 0; i < EveryInstantiatedPrefab.Count; i++)
+		{
+            DestroyImmediate(EveryInstantiatedPrefab[i]);
+		}
 
         EveryInstantiatedPrefab.Clear();
         EveryInstantiatedPrefab.Clear();
@@ -119,10 +127,11 @@ public class DungeonGenerator : MonoBehaviour
                 GameObject instanceObj = Instantiate(_Object, posRandomInRoom, Quaternion.identity);
                 instanceObj.transform.parent = gameObject.transform;
                 EveryInstantiatedPrefab.Add(instanceObj);
-                if (_Object.GetComponent<Player>() != null)
-                {
-                    DungeonData.Player = instanceObj.GetComponent<Player>();
-                }
+
+                if (_Object.GetComponent<EndBoss>() != null)
+				{
+                    DungeonData.EnemyList.Add(instanceObj.GetComponent<EndBoss>());
+				}
             }
         }
     }
@@ -191,7 +200,7 @@ public class DungeonGenerator : MonoBehaviour
             bool samePos = false;
             for (int i = 0; i < ObjectAmount; i++)
             {
-                posRandomInRoom = new Vector3(EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().x, EnemiesCanSpawnRoomList[j].GetRandomPositionInRoom().y, 0);
+                posRandomInRoom = new Vector3(RoomList[j].GetRandomPositionInRoom().x, RoomList[j].GetRandomPositionInRoom().y, 0);
                 foreach (Item _lookobjectinlist in _list)
                 {
                     if (posRandomInRoom == _lookobjectinlist.transform.position)
@@ -211,11 +220,11 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void SpwanRandomObjectInRoom(GameObject _obj, List<Enemy> _list)
+    private void SpwanRandomEnemiesInRoom(GameObject _obj, List<Enemy> _list)
     {
         for (int j = 0; j < EnemiesCanSpawnRoomList.Count; j++)
         {
-            int ObjectAmount = Random.Range(MinObjectInRoom, MaxObjectInRoom);
+            int ObjectAmount = Random.Range(MinEnemiesInRoom, MaxEnemiesInRoom);
 
             bool samePos = false;
             for (int i = 0; i < ObjectAmount; i++)

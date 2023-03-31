@@ -6,5 +6,4 @@ public class DungeonData : ScriptableObject
 {
     public List<Item> ItemList = new List<Item>();
     public List<Enemy> EnemyList = new List<Enemy>();
-    public Player Player;
 }

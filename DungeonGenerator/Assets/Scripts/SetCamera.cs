@@ -11,9 +11,13 @@ public class SetCamera : MonoBehaviour
     public void Awake()
     {
         VirtualCamera = GetComponent<CinemachineVirtualCamera>();
+        for (int i = 0; i < 20; i++)
+        {
+            GetPlayerCam();
+        }
     }
 
-    public void GetPlayerCam()
+	public void GetPlayerCam()
     {
         Player = FindObjectOfType<Player>().transform;
         VirtualCamera.Follow = FindObjectOfType<Player>().transform;
