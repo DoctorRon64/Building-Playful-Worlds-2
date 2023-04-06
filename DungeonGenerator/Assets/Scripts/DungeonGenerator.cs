@@ -65,7 +65,6 @@ public class DungeonGenerator : MonoBehaviour
         }
 
         GenerateDungeon();
-        SetCameraFollow.GetPlayerCam();
     }
 
     [ContextMenu("Clear")]
