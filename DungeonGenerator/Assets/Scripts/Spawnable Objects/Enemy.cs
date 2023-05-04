@@ -97,7 +97,7 @@ public class Enemy : MonoBehaviour
         int check = 0;
         if (IsPlayerInHood())
 		{
-            int newDir = EnemyFindPlayerBehaviour();
+            int newDir = OnWhichSideIsPlayerFromEnemy();
 
             while (!isFloorTile(GetTileTypeAround(WhichSideToMove[newDir])) || GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.ItemList) == true || GetObjectTypeWithKey(GetTileTypeAround(WhichSideToMove[newDir]), DungeonDatas.EnemyList) == true)
             {
@@ -175,7 +175,7 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-    public int EnemyFindPlayerBehaviour()
+    public int OnWhichSideIsPlayerFromEnemy()
 	{
         float dX = PlayerObj.transform.position.x - transform.position.x;
         float dY = PlayerObj.transform.position.y - transform.position.y;

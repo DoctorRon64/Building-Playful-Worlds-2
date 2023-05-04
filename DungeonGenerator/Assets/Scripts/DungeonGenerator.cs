@@ -106,16 +106,20 @@ public class DungeonGenerator : MonoBehaviour
 
         Room Room = new Room(minX, maxX, minY, maxY);
 
-        if (RoomList != null)
+        if (RoomList == null)
 		{
-            while (CanRoomFitInsideDungeon(Room))
-            {
-                PlaceRoomInsideDungeon(Room, _tiletip, false);
-            }
+            ClearDungeon();
+            Generate();
         } 
         else
 		{
-            PlaceRoomInsideDungeon(Room, _tiletip, false);
+            while (CanRoomFitInsideDungeon(Room))
+            {
+                if (RoomList.Count <= 2)
+				{
+                    PlaceRoomInsideDungeon(Room, _tiletip, false);
+                }
+            }
         }
 
         foreach(Room _room in RoomList)
