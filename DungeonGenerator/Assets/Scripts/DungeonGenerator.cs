@@ -64,6 +64,7 @@ public class DungeonGenerator : MonoBehaviour
             SpwanRandomObjectInRoom(Items[i], DungeonData.ItemList);
         }
 
+        //GenerateEndBossFix();
         GenerateDungeon();
     }
 
@@ -106,20 +107,9 @@ public class DungeonGenerator : MonoBehaviour
 
         Room Room = new Room(minX, maxX, minY, maxY);
 
-        if (RoomList == null)
-		{
-            ClearDungeon();
-            Generate();
-        } 
-        else
-		{
-            while (CanRoomFitInsideDungeon(Room))
-            {
-                if (RoomList.Count <= 2)
-				{
-                    PlaceRoomInsideDungeon(Room, _tiletip, false);
-                }
-            }
+        while (CanRoomFitInsideDungeon(Room))
+        {
+            PlaceRoomInsideDungeon(Room, _tiletip, false);
         }
 
         foreach(Room _room in RoomList)
@@ -132,10 +122,24 @@ public class DungeonGenerator : MonoBehaviour
                 EveryInstantiatedPrefab.Add(instanceObj);
 
                 if (_Object.GetComponent<EndBoss>() != null)
-				{
+                {
                     DungeonData.EnemyList.Add(instanceObj.GetComponent<EndBoss>());
-				}
+                }
             }
+        }
+    }
+
+    private void GenerateEndBossFix()
+	{
+        //safty for if there is no boss
+        if (GetComponent<EndBoss>() == null)
+        {
+            int _rndRoom = Random.Range(1, RoomList.Count);
+            posRandomInRoom = new Vector3(RoomList[_rndRoom].GetRandomPositionInRoom().x, RoomList[_rndRoom].GetRandomPositionInRoom().y, 0);
+            GameObject instanceObj = Instantiate(EndBoss, posRandomInRoom, Quaternion.identity);
+            instanceObj.transform.parent = gameObject.transform;
+            EveryInstantiatedPrefab.Add(instanceObj);
+            DungeonData.EnemyList.Add(instanceObj.GetComponent<EndBoss>());
         }
     }
 

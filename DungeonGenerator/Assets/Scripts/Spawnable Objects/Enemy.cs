@@ -156,7 +156,7 @@ public class Enemy : MonoBehaviour
         CheckIfEnemyDies();
     }
 
-    public void CheckIfEnemyDies()
+    public virtual void CheckIfEnemyDies()
 	{
         if (Health <= 0)
 		{
@@ -166,10 +166,6 @@ public class Enemy : MonoBehaviour
 				{
                     DungeonDatas.EnemyList.Remove(this);
                     gameObject.SetActive(false);
-                }
-                else if (gameObject.GetComponent<EndBoss>() != null)
-                {
-                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
                 }
             }
 		}

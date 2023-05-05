@@ -56,18 +56,16 @@ public class Player : MonoBehaviour
 
     private void PlayerMovement()
     {
-        // move towards the MovePoint at MoveSpeed
         transform.position = Vector3.MoveTowards(transform.position, MovePoint, MoveSpeed * Time.deltaTime);
 
-        // check if the player has reached the MovePoint
         if (Vector3.Distance(transform.position, MovePoint) <= .01f)
         {
-            // move left or right
             if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
             {
                 Vector2Int moveDir = new Vector2Int((int)Input.GetAxisRaw("Horizontal"), 0);
                 Vector2Int newTilePos = new Vector2Int((int)MovePoint.x, (int)MovePoint.y) + moveDir;
                 Vector3 newTilePosVector3 = new Vector3(newTilePos.x, newTilePos.y, 1);
+
                 if (isFloorTile(newTilePosVector3))
                 {
                     MovePoint = newTilePos;
@@ -76,12 +74,12 @@ public class Player : MonoBehaviour
                     CheckIfPlayerSteppedOnEnemy();
                 }
             }
-            // move up or down
             else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
             {
                 Vector2Int moveDir = new Vector2Int(0, (int)Input.GetAxisRaw("Vertical"));
                 Vector2Int newTilePos = new Vector2Int((int)MovePoint.x, (int)MovePoint.y) + moveDir;
                 Vector3 newTilePosVector3 = new Vector3(newTilePos.x, newTilePos.y, 1);
+
                 if (isFloorTile(newTilePosVector3))
                 {
                     MovePoint = newTilePos;
@@ -90,16 +88,16 @@ public class Player : MonoBehaviour
                     CheckIfPlayerSteppedOnEnemy();
                 }
             }
-            // check if the player is standing still
+
             else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 0f && Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 0f)
             {
                 CheckIfPlayerDies();
                 GetItemWhenWalkedOn();
             }
-            // set Moving animator parameter to false
+
             AnimatorController.SetBool("Moving", false);
         }
-        // set Moving animator parameter to true
+
         else
         {
             AnimatorController.SetBool("Moving", true);

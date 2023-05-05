@@ -1455,9 +1455,9 @@ MonoBehaviour:
   GridWidth: 20
   GridHeight: 20
   minRoomSize: 3
-  MaxRoomSize: 5
-  MaxObjectInRoom: 3
-  MinObjectInRoom: 1
+  MaxRoomSize: 4
+  MaxObjectInRoom: 5
+  MinObjectInRoom: 2
   MaxEnemiesInRoom: 1
   MinEnemiesInRoom: 1
   numRoom: 1
