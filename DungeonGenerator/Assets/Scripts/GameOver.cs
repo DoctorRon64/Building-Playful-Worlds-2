@@ -19,4 +19,9 @@ public class GameOver : MonoBehaviour
 	{
 		SceneManager.LoadScene(sceneName);
 	}
+
+	public void Restart()
+	{
+		LoadScene("Dungeongenerator");
+	}
 }

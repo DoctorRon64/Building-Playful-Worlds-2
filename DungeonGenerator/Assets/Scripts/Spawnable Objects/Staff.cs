@@ -5,7 +5,9 @@ public class Staff : Item
     public override void OtherAwake()
     {
         IsWeapon = true;
+        IsConsumable = true;
         AttackDamage = Random.Range(5, 10);
+        ConsumeAmount = Random.Range(0, 5);
         MakeItemRareder(AttackDamage);
     }
 
@@ -20,5 +22,6 @@ public class Staff : Item
     public override void Use()
     {
         player.DoDamage(AttackDamage);
+        player.ApplyHealth(ConsumeAmount);
     }
 }
