@@ -22,9 +22,5 @@ public class InventoryManager : MonoBehaviour
             obj.Setup(item);
             emptySlot.ObtainItem(obj);
         }
-        else
-        {
-            Debug.Log("Inventory is Full!");
-        }
     }
 }

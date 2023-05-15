@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2193332823900589769}
   - component: {fileID: 7077680441297554096}
-  - component: {fileID: 7943320432580110656}
+  - component: {fileID: -2760910842498397886}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -85,7 +85,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7943320432580110656
+--- !u!114 &-2760910842498397886
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -94,11 +94,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2327412251639442876}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d75e5af3a9fea41a0c097185fa34a2, type: 3}
+  m_Script: {fileID: 11500000, guid: def620a6b4b9fe041a38633bae7b88f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MovePoint: {x: 0, y: 0}
   MoveSpeed: 5
   DungeonDatas: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
+  gameOver: {fileID: 0}
   Health: 0
   AttackDamage: 0

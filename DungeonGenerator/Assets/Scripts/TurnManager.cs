@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
 
@@ -75,10 +74,6 @@ public class TurnManager : MonoBehaviour
         IsPlayerTurn = false;
         IsOpponentTurn = true;
         PlayerImage.enabled = false;
-        if (DungeonData.EnemyList.Count <= 0) 
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
-        }
         StartCoroutine(EnemyTurn());
     }
 

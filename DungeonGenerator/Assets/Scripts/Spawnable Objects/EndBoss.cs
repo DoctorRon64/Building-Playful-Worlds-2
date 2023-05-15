@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class EndBoss : Enemy
 {
@@ -7,7 +6,7 @@ public class EndBoss : Enemy
     {
         if (Health <= 0)
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+            gameOver.GameWon();
         }
     }
 }

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using static DungeonGenerator;
 using UnityEngine.Timeline;
 
@@ -14,7 +13,9 @@ public class Enemy : MonoBehaviour
 
     private Player PlayerObj;
     public DungeonData DungeonDatas;
+    public GameOver gameOver;
     private DungeonGenerator DungeonGenerator;
+    private TurnManager TurnManager;
 
     public int Health;
     public int AttackDamage;
@@ -32,8 +33,9 @@ public class Enemy : MonoBehaviour
 
         MovePoint = transform.position;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        TurnManager = FindObjectOfType<TurnManager>();
+        gameOver = TurnManager.GetComponent<GameOver>();
         PlayerObj = FindObjectOfType<Player>();
-
     }
 
     protected void Update()
@@ -143,7 +145,7 @@ public class Enemy : MonoBehaviour
     {
         for (int i = 0; i < WhichSideToMove.Length; i++)
         {
-            if ((Vector3)MovePoint == PlayerObj.transform.position || this.transform.position == PlayerObj.transform.position)
+            if ((Vector3)MovePoint == PlayerObj.transform.position || gameObject.transform.position == PlayerObj.transform.position)
             {
                 PlayerObj.TakeDamage(AttackDamage);
             }

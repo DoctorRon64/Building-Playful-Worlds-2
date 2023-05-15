@@ -49,8 +49,8 @@ public class DungeonGenerator : MonoBehaviour
     public void Generate()
     {
         ClearDungeon();
-        MakeSilentRoom(Player, TileType.StartFloor);
-        MakeSilentRoom(EndBoss, TileType.BossFloor);
+        MakeRoom(Player, TileType.StartFloor);
+        MakeRoom(EndBoss, TileType.BossFloor);
         AllLocateRooms();
         ConnectRooms();
         AllLocateWalls();
@@ -59,12 +59,11 @@ public class DungeonGenerator : MonoBehaviour
 		{
             SpwanRandomEnemiesInRoom(Enemies[i], DungeonData.EnemyList);
 		}
-        for (int i = 0; i < Items.Count; i++)
-        {
-            SpwanRandomObjectInRoom(Items[i], DungeonData.ItemList);
-        }
+		for (int i = 0; i < Items.Count; i++)
+		{
+			SpwanRandomObjectInRoom(Items[i], DungeonData.ItemList);
+		}
 
-        //GenerateEndBossFix();
         GenerateDungeon();
     }
 
@@ -98,48 +97,42 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void MakeSilentRoom(GameObject _Object, TileType _tiletip)
+    private void MakeRoom(GameObject _Spawnable, TileType _tileType)
     {
-        int minX = Random.Range(0, GridWidth);
-        int maxX = minX + Random.Range(minRoomSize, MaxRoomSize + 1);
-        int minY = Random.Range(0, GridHeight);
-        int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
+        int attempts = 0;
+        bool roomPlaced = false;
 
-        Room Room = new Room(minX, maxX, minY, maxY);
-
-        while (CanRoomFitInsideDungeon(Room))
+        while (!roomPlaced && attempts < 100)
         {
-            PlaceRoomInsideDungeon(Room, _tiletip, false);
-        }
+            int minX = Random.Range(0, GridWidth);
+            int maxX = minX + Random.Range(minRoomSize, MaxRoomSize + 1);
+            int minY = Random.Range(0, GridHeight);
+            int maxY = minY + Random.Range(minRoomSize, MaxRoomSize + 1);
 
-        foreach(Room _room in RoomList)
-		{
-            if (_room == Room)
-			{
-                posRandomInRoom = new Vector3(_room.GetRandomPositionInRoom().x, _room.GetRandomPositionInRoom().y, 0);
-                GameObject instanceObj = Instantiate(_Object, posRandomInRoom, Quaternion.identity);
+            Room TheRoom = new Room(minX, maxX, minY, maxY);
+
+            if (CanRoomFitInsideDungeon(TheRoom))
+            {
+                PlaceRoomInsideDungeon(TheRoom, _tileType, false);
+                posRandomInRoom = new Vector3(TheRoom.GetRandomPositionInRoom().x, TheRoom.GetRandomPositionInRoom().y, 0);
+                GameObject instanceObj = Instantiate(_Spawnable, posRandomInRoom, Quaternion.identity);
                 instanceObj.transform.parent = gameObject.transform;
                 EveryInstantiatedPrefab.Add(instanceObj);
 
-                if (_Object.GetComponent<EndBoss>() != null)
+                if (instanceObj.GetComponent<EndBoss>())
                 {
                     DungeonData.EnemyList.Add(instanceObj.GetComponent<EndBoss>());
+                    DungeonData.EndBoss = instanceObj.GetComponent<EndBoss>();
                 }
+                roomPlaced = true;
             }
-        }
-    }
 
-    private void GenerateEndBossFix()
-	{
-        //safty for if there is no boss
-        if (GetComponent<EndBoss>() == null)
+            attempts++;
+        }
+
+        if (!roomPlaced)
         {
-            int _rndRoom = Random.Range(1, RoomList.Count);
-            posRandomInRoom = new Vector3(RoomList[_rndRoom].GetRandomPositionInRoom().x, RoomList[_rndRoom].GetRandomPositionInRoom().y, 0);
-            GameObject instanceObj = Instantiate(EndBoss, posRandomInRoom, Quaternion.identity);
-            instanceObj.transform.parent = gameObject.transform;
-            EveryInstantiatedPrefab.Add(instanceObj);
-            DungeonData.EnemyList.Add(instanceObj.GetComponent<EndBoss>());
+            Debug.LogWarning("Failed to place room within dungeon.");
         }
     }
 
@@ -164,6 +157,7 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
     }
+
     private void AllLocateWalls()
     {
         var keys = Dungeon.Keys.ToList();

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using static DungeonGenerator;
 
 public class Player : MonoBehaviour
@@ -12,9 +11,10 @@ public class Player : MonoBehaviour
 
     public int Health = 20;
     public GameObject EnemieHitHud;
-    private TurnManager TurnManager;
-    private DungeonGenerator DungeonGenerator;
-    private InventoryManager Inventory;
+    private TurnManager turnManager;
+    private GameOver gameOver;
+    private DungeonGenerator dungeonGenerator;
+    private InventoryManager inventory;
     public DungeonData dungeonData;
 
     private Vector2Int[] WhichSideToMove = new Vector2Int[4];
@@ -28,15 +28,16 @@ public class Player : MonoBehaviour
 
         MovePoint = transform.position;
         EnemieHitHud.SetActive(false);
-        DungeonGenerator = FindObjectOfType<DungeonGenerator>();
-        TurnManager = FindObjectOfType<TurnManager>();
-        Inventory = FindObjectOfType<InventoryManager>();
+        dungeonGenerator = FindObjectOfType<DungeonGenerator>();
+        turnManager = FindObjectOfType<TurnManager>();
+        inventory = FindObjectOfType<InventoryManager>();
+        gameOver = turnManager.GetComponent<GameOver>();
         AnimatorController = GetComponent<Animator>();
     }
 
 	private void Update()
 	{
-        if (StepsAmount > 0 && TurnManager.IsPlayerTurn == true)
+        if (StepsAmount > 0 && turnManager.IsPlayerTurn == true)
         {
             PlayerMovement();
         }
@@ -44,7 +45,7 @@ public class Player : MonoBehaviour
 
     private TileType GetTileTypeWithKey(Vector2Int _Vector2)
     {
-        DungeonGenerator.Dungeon.TryGetValue(_Vector2, out TileType tiletip);
+        dungeonGenerator.Dungeon.TryGetValue(_Vector2, out TileType tiletip);
         return tiletip;
     }
 
@@ -70,7 +71,7 @@ public class Player : MonoBehaviour
                 {
                     MovePoint = newTilePos;
                     StepsAmount--;
-                    TurnManager.GetIfPlayerWalked();
+                    turnManager.GetIfPlayerWalked();
                     CheckIfPlayerSteppedOnEnemy();
                 }
             }
@@ -84,7 +85,7 @@ public class Player : MonoBehaviour
                 {
                     MovePoint = newTilePos;
                     StepsAmount--;
-                    TurnManager.GetIfPlayerWalked();
+                    turnManager.GetIfPlayerWalked();
                     CheckIfPlayerSteppedOnEnemy();
                 }
             }
@@ -110,7 +111,7 @@ public class Player : MonoBehaviour
         {
             if (gameObject.transform.position == dungeonData.ItemList[i].transform.position)
             {
-                Inventory.PickupItem(dungeonData.ItemList[i]);
+                inventory.PickupItem(dungeonData.ItemList[i]);
             }
         }
     }
@@ -154,7 +155,7 @@ public class Player : MonoBehaviour
     {
         if (Health <= 0)
         {
-            SceneManager.LoadScene("lose", LoadSceneMode.Additive);
+            gameOver.GameLose();
         }
     }
 }
