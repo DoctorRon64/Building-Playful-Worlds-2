@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
     public int Health = 20;
     public GameObject EnemieHitHud;
     private TurnManager turnManager;
-    private GameOver gameOver;
+    private SceneLoadManager gameOver;
     private DungeonGenerator dungeonGenerator;
     private InventoryManager inventory;
     public DungeonData dungeonData;
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour
         dungeonGenerator = FindObjectOfType<DungeonGenerator>();
         turnManager = FindObjectOfType<TurnManager>();
         inventory = FindObjectOfType<InventoryManager>();
-        gameOver = turnManager.GetComponent<GameOver>();
+        gameOver = turnManager.GetComponent<SceneLoadManager>();
         AnimatorController = GetComponent<Animator>();
     }
 

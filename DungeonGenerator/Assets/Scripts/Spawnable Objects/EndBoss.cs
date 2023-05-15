@@ -6,7 +6,7 @@ public class EndBoss : Enemy
     {
         if (Health <= 0)
         {
-            gameOver.GameWon();
+            SceneLoadManager.ToNextScene();
         }
     }
 }

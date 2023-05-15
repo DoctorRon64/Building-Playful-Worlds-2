@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
 
     private Player PlayerObj;
     public DungeonData DungeonDatas;
-    public GameOver gameOver;
+    public SceneLoadManager SceneLoadManager;
     private DungeonGenerator DungeonGenerator;
     private TurnManager TurnManager;
 
@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
         MovePoint = transform.position;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         TurnManager = FindObjectOfType<TurnManager>();
-        gameOver = TurnManager.GetComponent<GameOver>();
+        SceneLoadManager = TurnManager.GetComponent<SceneLoadManager>();
         PlayerObj = FindObjectOfType<Player>();
     }
 
