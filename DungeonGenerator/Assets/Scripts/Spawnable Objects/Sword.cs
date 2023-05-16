@@ -10,6 +10,7 @@ public class Sword : Item
 
     public override void Use()
     {
+        PlayItemSound(this);
         player.DoDamage(AttackDamage);
     }
 }

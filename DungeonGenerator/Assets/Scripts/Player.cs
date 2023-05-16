@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
 
     public int Health = 20;
     public GameObject EnemieHitHud;
+    private SoundEffectsPlayer sfxPlayer;
     private TurnManager turnManager;
     private SceneLoadManager gameOver;
     private DungeonGenerator dungeonGenerator;
@@ -33,6 +34,7 @@ public class Player : MonoBehaviour
         inventory = FindObjectOfType<InventoryManager>();
         gameOver = turnManager.GetComponent<SceneLoadManager>();
         AnimatorController = GetComponent<Animator>();
+        sfxPlayer = GetComponent<SoundEffectsPlayer>();
     }
 
 	private void Update()
@@ -70,6 +72,7 @@ public class Player : MonoBehaviour
                 if (isFloorTile(newTilePosVector3))
                 {
                     MovePoint = newTilePos;
+                    sfxPlayer.PlayAudio(4);
                     StepsAmount--;
                     turnManager.GetIfPlayerWalked();
                     CheckIfPlayerSteppedOnEnemy();
@@ -84,6 +87,7 @@ public class Player : MonoBehaviour
                 if (isFloorTile(newTilePosVector3))
                 {
                     MovePoint = newTilePos;
+                    sfxPlayer.PlayAudio(4);
                     StepsAmount--;
                     turnManager.GetIfPlayerWalked();
                     CheckIfPlayerSteppedOnEnemy();
@@ -130,6 +134,7 @@ public class Player : MonoBehaviour
     public void TakeDamage(int _Damage)
     {
         Health -= _Damage;
+        sfxPlayer.PlayAudio(0);
     }
 
     public void ApplyHealth(int _Health)
@@ -137,24 +142,40 @@ public class Player : MonoBehaviour
         Health += _Health;
     }
 
-    public void DoDamage(int _Damage)
-	{
-        for (int i = 0; i < dungeonData.EnemyList.Count; i++)
-		{
-            for (int j = 0; j < WhichSideToMove.Length; j++)
+    public void DoDamage(int _damage)
+    {
+        foreach (Enemy _enemy in dungeonData.EnemyList)
+        {
+            for (int i = 0; i < WhichSideToMove.Length; i++)
             {
-                if (dungeonData.EnemyList[i].transform.position == transform.position + new Vector3(WhichSideToMove[j].x, WhichSideToMove[j].y, 0f))
+                if (_enemy.transform.position == transform.position + new Vector3(WhichSideToMove[i].x, WhichSideToMove[i].y, 0f))
                 {
-                    dungeonData.EnemyList[i].TakeDamage(_Damage);
+                    _enemy.TakeDamage(_damage);
+
+                    if (_enemy.GetComponent<Zombie>())
+                    {
+                        sfxPlayer.PlayAudio(1);
+                    }
+
+                    else if (_enemy.GetComponent<Goblin>())
+                    {
+                        sfxPlayer.PlayAudio(2);
+                    }
+
+                    else if (_enemy.GetComponent<EndBoss>())
+                    {
+                        sfxPlayer.PlayAudio(3);
+                    }
                 }
             }
         }
-	}
+    }
 
     public void CheckIfPlayerDies()
     {
         if (Health <= 0)
         {
+            sfxPlayer.PlayAudio(0);
             gameOver.GameLose();
         }
     }

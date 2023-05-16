@@ -24,4 +24,9 @@ public class SceneLoadManager : MonoBehaviour
 	{
 		LoadScene("Dungeongenerator");
 	}
+
+	public void MainMenu()
+	{
+		LoadScene("MainMenu");
+	}
 }

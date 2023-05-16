@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     public DungeonData DungeonDatas;
     public SceneLoadManager SceneLoadManager;
     private DungeonGenerator DungeonGenerator;
+    private SoundEffectsPlayer sfxPlayer;
     private TurnManager TurnManager;
 
     public int Health;
@@ -29,13 +30,14 @@ public class Enemy : MonoBehaviour
         WhichSideToMove[4] = new Vector2Int(0, 0);
         
         Health = Random.Range(4, 10);
-        AttackDamage = Random.Range(1, 3);
+        AttackDamage = Random.Range(2, 4);
 
         MovePoint = transform.position;
         DungeonGenerator = FindObjectOfType<DungeonGenerator>();
         TurnManager = FindObjectOfType<TurnManager>();
         SceneLoadManager = TurnManager.GetComponent<SceneLoadManager>();
         PlayerObj = FindObjectOfType<Player>();
+        sfxPlayer = GetComponent<SoundEffectsPlayer>();
     }
 
     protected void Update()

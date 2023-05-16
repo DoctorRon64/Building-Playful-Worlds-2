@@ -100,6 +100,6 @@ MonoBehaviour:
   MovePoint: {x: 0, y: 0}
   MoveSpeed: 5
   DungeonDatas: {fileID: 11400000, guid: 9727203b6b5dd554cafce5b00ae1e959, type: 2}
-  gameOver: {fileID: 0}
+  SceneLoadManager: {fileID: 0}
   Health: 0
   AttackDamage: 0

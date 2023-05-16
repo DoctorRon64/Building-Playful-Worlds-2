@@ -6,6 +6,7 @@ public class Staff : Item
     {
         IsWeapon = true;
         IsConsumable = true;
+        IsStaff = true;
         AttackDamage = Random.Range(5, 10);
         ConsumeAmount = Random.Range(0, 5);
         MakeItemRareder(AttackDamage);
@@ -21,6 +22,7 @@ public class Staff : Item
 
     public override void Use()
     {
+        PlayItemSound(this);
         player.DoDamage(AttackDamage);
         player.ApplyHealth(ConsumeAmount);
     }

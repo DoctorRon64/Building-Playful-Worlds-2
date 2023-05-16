@@ -10,6 +10,7 @@ public class HealthPotion : Item
 
     public override void Use()
     {
+        PlayItemSound(this);
         player.ApplyHealth(ConsumeAmount);
     }
 }

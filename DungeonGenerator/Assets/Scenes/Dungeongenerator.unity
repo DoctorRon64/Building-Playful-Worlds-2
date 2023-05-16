@@ -424,8 +424,8 @@ MonoBehaviour:
   GridHeight: 100
   minRoomSize: 10
   MaxRoomSize: 15
-  MaxObjectInRoom: 0
-  MinObjectInRoom: 3
+  MaxObjectInRoom: 3
+  MinObjectInRoom: 0
   MaxEnemiesInRoom: 1
   MinEnemiesInRoom: 2
   numRoom: 15
@@ -1426,7 +1426,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: f3a487b779bd77946b9ef73704b3f8fd, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.611
   m_Pitch: 1
   Loop: 1
   Mute: 0
