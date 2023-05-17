@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using static DungeonGenerator;
 
@@ -141,35 +142,40 @@ public class Player : MonoBehaviour
     {
         Health += _Health;
     }
-
-    public void DoDamage(int _damage)
+    public void DoDamage(int damage)
     {
-        foreach (Enemy _enemy in dungeonData.EnemyList)
+        Vector3 currentPosition = transform.position;
+        List<Enemy> enemiesToDamage = new List<Enemy>(dungeonData.EnemyList);
+
+        foreach (Enemy enemy in enemiesToDamage)
         {
-            for (int i = 0; i < WhichSideToMove.Length; i++)
+            if (IsAdjacentPosition(enemy.transform.position))
             {
-                if (_enemy.transform.position == transform.position + new Vector3(WhichSideToMove[i].x, WhichSideToMove[i].y, 0f))
+                enemy.TakeDamage(damage);
+
+                if (enemy.TryGetComponent(out Zombie _))
                 {
-                    _enemy.TakeDamage(_damage);
-
-                    if (_enemy.GetComponent<Zombie>())
-                    {
-                        sfxPlayer.PlayAudio(1);
-                    }
-
-                    else if (_enemy.GetComponent<Goblin>())
-                    {
-                        sfxPlayer.PlayAudio(2);
-                    }
-
-                    else if (_enemy.GetComponent<EndBoss>())
-                    {
-                        sfxPlayer.PlayAudio(3);
-                    }
+                    sfxPlayer.PlayAudio(1);
+                }
+                else if (enemy.TryGetComponent(out Goblin _))
+                {
+                    sfxPlayer.PlayAudio(2);
+                }
+                else if (enemy.TryGetComponent(out EndBoss _))
+                {
+                    sfxPlayer.PlayAudio(3);
                 }
             }
         }
     }
+
+
+    private bool IsAdjacentPosition(Vector3 enemyPosition)
+    {
+        float distance = Vector3.Distance(transform.position, enemyPosition);
+        return distance <= 1f;
+    }
+
 
     public void CheckIfPlayerDies()
     {

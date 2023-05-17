@@ -168,8 +168,8 @@ public class Enemy : MonoBehaviour
 			{
                 if (DungeonDatas.EnemyList[i] == gameObject.GetComponent<Enemy>())
 				{
-                    DungeonDatas.EnemyList.Remove(this);
                     gameObject.SetActive(false);
+                    DungeonDatas.EnemyList.Remove(this);
                 }
             }
 		}

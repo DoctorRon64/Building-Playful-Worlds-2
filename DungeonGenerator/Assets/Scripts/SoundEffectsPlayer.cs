@@ -5,6 +5,7 @@ using UnityEngine;
 public class SoundEffectsPlayer : MonoBehaviour
 {
     [SerializeField] private AudioSource src;
+    [SerializeField] private AudioSource src2;
     public List<AudioClip> sfxPlayer = new List<AudioClip>();
     public List<AudioClip> sfxZombie = new List<AudioClip>();
     public List<AudioClip> sfxGoblin = new List<AudioClip>();
@@ -51,7 +52,7 @@ public class SoundEffectsPlayer : MonoBehaviour
 
     private void PlayAudioClip(AudioClip audioClip)
     {
-        src.clip = audioClip;
-        src.Play();
+        src2.clip = audioClip;
+        src2.Play();
     }
 }
