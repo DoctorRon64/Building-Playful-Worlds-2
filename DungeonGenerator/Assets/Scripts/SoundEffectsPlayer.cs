@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SoundEffectsPlayer : MonoBehaviour
 {
-    [SerializeField] private AudioSource src;
-    [SerializeField] private AudioSource src2;
+    [SerializeField] private AudioSource srcSfx;
+    [SerializeField] private AudioSource srcMobs;
     public List<AudioClip> sfxPlayer = new List<AudioClip>();
     public List<AudioClip> sfxZombie = new List<AudioClip>();
     public List<AudioClip> sfxGoblin = new List<AudioClip>();
@@ -14,11 +14,6 @@ public class SoundEffectsPlayer : MonoBehaviour
     public AudioClip sfxDrinking;
     public AudioClip sfxStaffSound;
     public AudioClip sfxSwordSound;
-
-    private void Awake()
-    {
-        src = GetComponent<AudioSource>();
-    }
 
     public void PlayAudio(int _indexMob)
     {
@@ -47,12 +42,13 @@ public class SoundEffectsPlayer : MonoBehaviour
         }
 
         int randomIndex = Random.Range(0, audioClips.Count);
-        PlayAudioClip(audioClips[randomIndex]);
+        srcMobs.clip = audioClips[randomIndex];
+        srcMobs.Play();
     }
 
     private void PlayAudioClip(AudioClip audioClip)
     {
-        src2.clip = audioClip;
-        src2.Play();
+        srcSfx.clip = audioClip;
+        srcSfx.Play();
     }
 }
